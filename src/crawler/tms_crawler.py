@@ -12,20 +12,25 @@ def get_page(page, meta="", retries=3):
         response = requests.get(page)
 
         if response.status_code == 200:
-            break
+            print('{red}{dt}\t{blue}{bold}{}{reset}{green}{}s elapsed{reset}'
+                  .format(meta,
+                          response.elapsed.total_seconds(),
+                          green=GREEN,
+                          reset=RESET,
+                          bold=BOLD,
+                          blue=BLUE,
+                          red=RED,
+                          dt=datetime.datetime.now()))
+            try:
+                return bs4.BeautifulSoup(response.text, 'html.parser')
+            except:
+                return None
         else:
-            print('{}\nLink: {}\nStatus code: {}\n'.format(datetime.datetime.now(), page, response.status_code))
-    else:
-        return None
+            print('\n{}\nLink: {}\nStatus code: {}\n'.format(datetime.datetime.now(), page, response.status_code))
 
-    print('{blue}{bold}{}{reset}{green}{}s elapsed{reset}'.format(meta,
-                                                                  response.elapsed.total_seconds(),
-                                                                  green=GREEN,
-                                                                  reset=RESET,
-                                                                  bold=BOLD,
-                                                                  blue=BLUE))
+    print('\n{}\nLink: {}\nFailed after {} tries\n'.format(datetime.datetime.now(), page, retries))
+    return None
 
-    return bs4.BeautifulSoup(response.text, 'html.parser')
 
 
 def get_college_page_sublinks(page):

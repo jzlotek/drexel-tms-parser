@@ -5,8 +5,9 @@ import os
 from crawler.tms_crawler import Crawler
 
 
-def run_crawler(crawler: Crawler):
+def run_crawler():
     try:
+        crawler = Crawler()
         crawler.crawl()
     except Exception as e:
         print('\n\n{}\n\n{}\n\n'.format(str(e), str(datetime.datetime.now())))
@@ -32,16 +33,14 @@ def get_output():
 
 
 if __name__ == '__main__':
-    
-    main_crawler = Crawler()
-
-    crawler_process = multiprocessing.Process(target=run_crawler, args=[main_crawler])
-    crawler_process.start()
-    main_crawler.crawl()
 
     if '.tmp' not in os.listdir('./'):
         os.mkdir('./.tmp')
+
+    crawler_process = multiprocessing.Process(target=run_crawler)
+
     try:
+        crawler_process.start()
         app.run(debug=True)
     except Exception as e:
         print(e)
