@@ -20,5 +20,17 @@ class Database(abc.ABC):
     def update_data(self, table_name, data, *args, **kwargs):
         pass
 
+    @abc.abstractmethod
+    def find_one(self, table_name, query, *args, **kwargs):
+        pass
+
+    @abc.abstractmethod
+    def find_many(self, table_name, query, *args, **kwargs):
+        pass
+
+    @abc.abstractmethod
+    def insert(self, table_name, data, *args, **kwargs):
+        pass
+
     def logger(self):
-        return logging.getLogger(str(self))
+        return logging.getLogger(self)
