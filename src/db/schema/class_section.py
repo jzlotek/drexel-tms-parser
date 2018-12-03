@@ -1,11 +1,14 @@
-from mongoengine import ListField, StringField, DateField, IntField, FloatField, DictField, Document
+from mongoengine import ListField, StringField, DateField, IntField, FloatField, DictField, BooleanField, Document
 
 
 class Section(Document):
+    college = StringField(required=True)
+    year = IntField(required=True)
+    isQuarter = BooleanField(required=True)
     crn = IntField(required=True)
     crnLink = StringField(required=True)
     # Course Number
-    cn = IntField(required=True)
+    cn = StringField(required=True)
     # Subject Code i.e. CS, UNIV, MATH
     # TODO: separate collections by the sc field to make lookups 
     # faster when looking for a class in a sqecific subject

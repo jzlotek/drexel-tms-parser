@@ -6,7 +6,7 @@ import pymongo.errors
 from pymongo import collection
 from pymongo import read_preferences
 import datetime
-
+from db.schema.class_section import Section
 
 class MongoDatabase(Database):
 
@@ -68,3 +68,59 @@ class MongoDatabase(Database):
             table.insert_many(data)
         else:
             table.insert_one(data)
+
+    @staticmethod
+    def create_course_section(
+        college: str,
+        year: int,
+        instructor: str,
+        isQuarter: bool,
+        crn: int,
+        crnLink: str,
+        cn: str,
+        sc: str,
+        it: str,
+        im: int,
+        sec: str,
+        title: str,
+        meeting: dict,
+        cr: float,
+        maxEnroll: int,
+        enrolled: int):
+        """
+            college: College of the course
+            year: The year it is (beginning in Septeber for the year)
+            instructor: instructor
+            isQuarter: if is quarter
+            crn: CRN of the course
+            crnLink: Link to the course page with more information
+            cn: Course number
+            sc: Subject Code i.e. UNIV, MATH, CS
+            it: Lecture, Lab, Lab & Lecture, etc.
+            im: 0 -> Face to Face, 1 -> Online, 2 -> Hybrid, 3 -> Community Based Learning
+            sec: Section -> 101, 201, A, B
+            title: Title
+            meeting: {'days': 'MTWRF/TBD', 'times': [start, end]}
+            cr: Credits
+            maxEnroll: Int
+            enrolled: Int    
+        """
+        course = Section(
+            college=college,
+            year=year,
+            isQuarter=isQuarter,
+            crn=crn,
+            crnLink=crnLink,
+            cn=cn,
+            sc=sc,
+            it=it,
+            im=im,
+            sec=sec,
+            title=title,
+            meeting=meeting,
+            cr=cr,
+            instructor=instructor,
+            maxEnroll=maxEnroll,
+            enrolled=enrolled
+        )
+        return course
