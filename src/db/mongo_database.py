@@ -113,7 +113,7 @@ class MongoDatabase(Database):
         if len(info_dict.items()) != 0:
             course_info_list = ClassInfo.objects(__raw__=info_dict)
             course_id_list = [
-                json.loads(c).get('_id').get('$oid') for c in course_info
+                json.loads(c).get('_id').get('$oid') for c in course_info_list
             ]
 
             course_sections = json.loads(
