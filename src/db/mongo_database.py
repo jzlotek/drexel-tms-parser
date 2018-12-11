@@ -11,6 +11,7 @@ from db.schema.class_info import ClassInfo
 from bson import ObjectId
 import json
 import mongoengine.errors
+import copy
 
 class MongoDatabase(Database):
 
@@ -111,9 +112,9 @@ class MongoDatabase(Database):
                 print('Unknown key/value pair: ', key, value)
         
         if len(info_dict.items()) != 0:
-            course_info_list = ClassInfo.objects(__raw__=info_dict)
+            course_info_list = json.loads(ClassInfo.objects(__raw__=info_dict).to_json())
             course_id_list = [
-                json.loads(c).get('_id').get('$oid') for c in course_info_list
+                c.get('_id').get('$oid') for c in course_info_list
             ]
 
             course_sections = json.loads(
@@ -126,12 +127,22 @@ class MongoDatabase(Database):
             for section in course_sections:
                 course_info = list(
                     filter(
-                        lambda ci: json.loads(ci).get('_id').get('$oid') == section.get('course'),
+                        lambda ci: ci.get('_id').get('$oid') == section.get('course'),
                         course_info_list
                     )
                 )
                 if len(course_info) == 1:
-                    section.update({'course': course_info})
+                    tmp_course = copy.deepcopy(course_info[0])
+                    if tmp_course.get('_id'):
+                        del tmp_course['_id']
+
+                    section.update({'course': tmp_course})
+                
+                if section.get('_id'):
+                    del section['_id']
+
+            
+            return course_sections
 
         
 

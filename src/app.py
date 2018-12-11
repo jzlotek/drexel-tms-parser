@@ -33,8 +33,9 @@ def get_course(path):
 
 
 if __name__ == '__main__':
-    database.crn(32008)
-    database.execute()
+    database.subject_code("CS")
+    print(database.execute())
+    # database.execute()
     if 'dist' not in os.listdir('../'):
         os.mkdir('../dist')
 
