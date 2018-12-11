@@ -7,67 +7,139 @@ from pymongo import collection
 from pymongo import read_preferences
 import datetime
 from db.schema.class_section import Section
+from db.schema.class_info import ClassInfo
+from bson import ObjectId
+import json
+import mongoengine.errors
 
 class MongoDatabase(Database):
 
     def __init__(self, db):
         super().__init__()
+        self.query = dict()
 
         try:
-            self.db = connect(host=db, read_preference=read_preferences.Primary())['__socket_for_writes']
+            self.db = connect(
+                host=db,
+                read_preference=read_preferences.Primary()
+            )['__socket_for_writes']
+
         except pymongo.errors.InvalidURI as e:
             print('{} is an invalid URI\n\n{}\n'.format(db, e))
 
         if not self.db.connect:
             self.logger().warning('{}'.format(str(db)))
 
-    def create_table(self, table_name, *args, **kwargs):
-        try:
-            collection.Collection(self.db,
-                                  table_name,
-                                  create=True,
-                                  codec_options=CodecOptions(document_class=RawBSONDocument))
+
+    def year(self, year):
+        self.query.update({'year': year})
+    
+    def section(self, section):
+        self.query.update({'sec': section})
+    
+    def crn(self, crn):
+        self.query.update({'crn': crn})
+    
+    def meeting(self, meeting):
+        self.query.update({'meeting': meeting})
+
+    def instructor(self, instructor):
+        self.query.update({'instructor': instructor})
+    
+    def college(self, college):
+        self.query.update({'college': college})
+    
+    def course_number(self, cn):
+        self.query.update({'cn': cn})
+
+    def subject_code(self, sc):
+        self.query.update({'sc': sc})
+    
+    def instruction_type(self, it):
+        self.query.update({'it': it})
+
+    def instruction_method(self, im):
+        self.query.update({'im': im})
+    
+    def credits(self, cr):
+        self.query.update({'cr': cr})
+
+    def execute(self):
+        info_dict = dict()
+        info_fields = [
+            'cr',
+            'college',
+            'it',
+            'im',
+            'sc',
+            'cn'
+        ]
+        section_dict = dict()
+        section_fields = [
+            'meeting',
+            'instructor',
+            'year',
+            'sec',
+            'crn'
+        ]
+
+        # handle CRN only lookup
+        if self.query.get('crn') is not None:
+            try:
+                section = json.loads(
+                    Section.objects.get(crn=self.query.get('crn')).to_json()
+                )
+                course_id = section.get('course')
+
+                course = ClassInfo.objects.get(
+                    id=ObjectId(course_id)
+                ).to_json()
+
+                section.update({'course': course})
+            except mongoengine.errors.DoesNotExist as error:
+                self.logger().error(error)
+                return None
+
+            return section
+
+        for key, value in self.query.items():
+            if key in info_fields:
+                info_dict.update({key: value})
+            elif key in section_fields:
+                section_dict.update({key: value})
+            else:
+                print('Unknown key/value pair: ', key, value)
         
-            self.logger().info("Table: {} created at: {} on {}".format(table_name, datetime.datetime.now(), self.db.host))
-        except AttributeError as e:
-            self.logger().info("{} | Error creating {}\n{}".format(datetime.datetime.now(), table_name, e))
-            print("{} | Error creating {}\n{}".format(datetime.datetime.now(), table_name, e))
-            return False
-        finally:
-            self.logger().info("{} | Error creating {}\n".format(datetime.datetime.now(), table_name))
-            print("{} | Error creating {}\n".format(datetime.datetime.now(), table_name))
-            return False
+        if len(info_dict.items()) != 0:
+            course_info_list = ClassInfo.objects(__raw__=info_dict)
+            course_id_list = [
+                json.loads(c).get('_id').get('$oid') for c in course_info
+            ]
+
+            course_sections = json.loads(
+                Section.objects(
+                    course__in=course_id_list,
+                    __raw__=section_dict
+                ).to_json()
+            )
+
+            for section in course_sections:
+                course_info = list(
+                    filter(
+                        lambda ci: json.loads(ci).get('_id').get('$oid') == section.get('course'),
+                        course_info_list
+                    )
+                )
+                if len(course_info) == 1:
+                    section.update({'course': course_info})
+
+        
 
 
-        return True
+        self.query = dict()
 
-    def get_table(self, table_name, *args, **kwargs):
-        col = collection.Collection(self.db,
-                                    table_name,
-                                    codec_options=CodecOptions(document_class=RawBSONDocument))
-        return col
-
-    def find_one(self, table_name, query, *args, **kwargs):
-        table = self.get_table(table_name)
-        return table.find_one(query)
-
-    def find_many(self, table_name, query, *args, **kwargs):
-        table = self.get_table(table_name)
-        return table.find_many(query)
-
-    def update_data(self, table_name, data, *args, **kwargs):
-        pass
-
-    def insert(self, table_name, data, *args, **kwargs):
-        table = self.get_table(table_name)
-
-        if not table:
-            return False
-
-        if isinstance(data, list) or isinstance(data, tuple):
-            table.insert_many(data)
-        else:
-            table.insert_one(data)
+    def get_query(self):
+        return self.query
 
     @staticmethod
     def create_course_section(

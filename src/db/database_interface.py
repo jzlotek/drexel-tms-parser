@@ -8,28 +8,58 @@ class Database(abc.ABC):
     def __init__(self):
         pass
 
+    # DB query building methods
     @abc.abstractmethod
-    def create_table(self, table_name, *args, **kwargs):
+    def year(self, year):
+        pass
+    
+    @abc.abstractmethod
+    def section(self, section):
+        pass
+    
+    @abc.abstractmethod
+    def crn(self, crn):
+        pass
+    
+    @abc.abstractmethod
+    def meeting(self, meeting):
         pass
 
     @abc.abstractmethod
-    def get_table(self, table_name, *args, **kwargs):
+    def instructor(self, instructor):
+        pass
+    
+    @abc.abstractmethod
+    def college(self, college):
+        pass
+    
+    @abc.abstractmethod
+    def course_number(self, cn):
         pass
 
     @abc.abstractmethod
-    def update_data(self, table_name, data, *args, **kwargs):
+    def subject_code(self, sc):
+        pass
+    
+    @abc.abstractmethod
+    def instruction_type(self, it):
         pass
 
     @abc.abstractmethod
-    def find_one(self, table_name, query, *args, **kwargs):
+    def instruction_method(self, im):
+        pass
+    
+    @abc.abstractmethod
+    def credits(self, im):
+        pass
+
+    # excecute stored query
+    @abc.abstractmethod
+    def execute(self):
         pass
 
     @abc.abstractmethod
-    def find_many(self, table_name, query, *args, **kwargs):
-        pass
-
-    @abc.abstractmethod
-    def insert(self, table_name, data, *args, **kwargs):
+    def get_query(self):
         pass
 
     def logger(self):
