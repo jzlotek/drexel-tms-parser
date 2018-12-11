@@ -5,6 +5,9 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
-load_dotenv()
+try:
+    load_dotenv()
+except:
+    pass
 
 database = mongo_database.MongoDatabase(os.environ['MONGO_URI'])
