@@ -1,10 +1,10 @@
 version: "3.4"
 services:
-  main:
-    image: main-image
-    container_name: drexel-tms-parser
+  drexel-tms-parser:
+    image: drexel-tms-parser-image
+    container_name: drexel-tms-parser-webserver
     build:
       context: .
       dockerfile: ./Dockerfile
     ports:
-      - "8080:5000"
+      - "5000:5000"

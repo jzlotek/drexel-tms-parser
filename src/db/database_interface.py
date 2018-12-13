@@ -1,6 +1,4 @@
 import abc
-import logging
-
 
 class Database(abc.ABC):
 
@@ -50,7 +48,7 @@ class Database(abc.ABC):
         pass
     
     @abc.abstractmethod
-    def credits(self, im):
+    def credits(self, cr):
         pass
 
     # excecute stored query
@@ -61,6 +59,3 @@ class Database(abc.ABC):
     @abc.abstractmethod
     def get_query(self):
         pass
-
-    def logger(self):
-        return logging.getLogger(self)

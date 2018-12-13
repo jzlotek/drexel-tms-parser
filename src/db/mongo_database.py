@@ -12,6 +12,7 @@ from bson import ObjectId
 import json
 import mongoengine.errors
 import copy
+from utils import logger
 
 class MongoDatabase(Database):
 
@@ -26,14 +27,18 @@ class MongoDatabase(Database):
             )['__socket_for_writes']
 
         except pymongo.errors.InvalidURI as e:
-            print('{} is an invalid URI\n\n{}\n'.format(db, e))
+            logger.error('{} is an invalid URI\n\n{}\n'.format(db, e))
 
         if not self.db.connect:
-            self.logger().warning('{}'.format(str(db)))
+            logger.warning('{}'.format(str(db)))
+        else:
+            logger.success('{}'.format(str(self.db)))
 
 
     def year(self, year):
-        self.query.update({'year': year})
+        query = {'year': year}
+        logger.debug(query)
+        self.query.update(query)
     
     def section(self, section):
         self.query.update({'sec': section})
@@ -98,7 +103,7 @@ class MongoDatabase(Database):
 
                 section.update({'course': course})
             except mongoengine.errors.DoesNotExist as error:
-                self.logger().error(error)
+                logger.error(error)
                 return None
 
             return section

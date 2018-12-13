@@ -1,11 +1,11 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, Response, request
 import datetime
 import multiprocessing
 import os
 from crawler.tms_crawler import Crawler
 from db import database
-
-
+import json
+from utils import Logger
 
 def run_crawler():
     try:
@@ -20,23 +20,38 @@ app = Flask(__name__,
             template_folder="../dist")
 
 
-# @app.route('/', defaults={'path': ''})
-# @app.route('/<path:path>')
-# def catch_all(path):
-#     return render_template("../dist/index.html")
+def query_builder(query, database):
 
-@app.route('/course/<path:path>', methods=['GET'])
-def get_course(path):
-    print(path)
-    database.execute()
-    return path
+    if query.get('subject'):
+        database.subject_code(query.get('subject'))
+    if query.get('section'):
+        database.section(query.get('section'))
+    if query.get('crn'):
+        database.crn(int(query.get('crn')))
+    if query.get('college'):
+        database.college(query.get('college'))
+    if query.get('instructor'):
+        database.instructor(query.get('instructor'))
+    if query.get('course_number'):
+        database.course_number(query.get('course_number'))
+    if query.get('instruction_method'):
+        database.instruction_method(int(query.get('instruction_method')))
+    if query.get('credits'):
+        database.credits(float(query.get('credits')))
+    
+
+@app.route('/course', methods=['GET'])
+def get_course():
+    query_builder(request.args, database)
+    
+    return Response(json.dumps(database.execute()), mimetype='application/json')
 
 
 if __name__ == '__main__':
-    database.subject_code("CS")
-    print(database.execute())
-    # database.execute()
+    logger = Logger().logger()
+    logger.info("Starting main")
     if 'dist' not in os.listdir('../'):
+        logger.debug("Making dist folders")
         os.mkdir('../dist')
 
     if '.tmp' not in os.listdir('../dist'):
