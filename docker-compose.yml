@@ -3,6 +3,8 @@ services:
   drexel-tms-parser:
     image: drexel-tms-parser-image
     container_name: drexel-tms-parser-webserver
+    env_file:
+     - ./src/db/.env
     build:
       context: .
       dockerfile: ./Dockerfile

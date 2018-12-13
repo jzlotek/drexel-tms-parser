@@ -8,10 +8,10 @@ RUN pip3 install virtualenv
 
 RUN virtualenv ./venv -p python3
 
-EXPOSE 5000
-
 RUN /bin/bash -c "source ./venv/bin/activate"
 
 RUN pip install -r ./requirements.txt
+
+EXPOSE 5000
 
 CMD ["python", "src/app.py"]
