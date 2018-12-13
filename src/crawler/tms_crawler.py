@@ -5,6 +5,7 @@ import threading
 import datetime
 from crawler.constants import BASE_URL, GREEN, RESET, BOLD, BLUE, RED, CYAN
 from crawler.utility import RowData, TMSClass, Encoder
+from utils import logger
 
 
 def get_page(page, meta="", retries=3):
@@ -12,23 +13,24 @@ def get_page(page, meta="", retries=3):
         response = requests.get(page)
 
         if response.status_code == 200:
-            print('{red}{dt}\t{blue}{bold}{}{reset}{green}{}s elapsed{reset}'
-                  .format(meta,
+            logger.info('\t{blue}{bold}{}s elapsed {reset}{green}{}{reset}'
+                  .format(
                           response.elapsed.total_seconds(),
+                          meta,
                           green=GREEN,
                           reset=RESET,
                           bold=BOLD,
                           blue=BLUE,
-                          red=RED,
-                          dt=datetime.datetime.now()))
+                          red=RED
+                    ))
             try:
                 return bs4.BeautifulSoup(response.text, 'html.parser')
             except:
                 return None
         else:
-            print('\n{}\nLink: {}\nStatus code: {}\n'.format(datetime.datetime.now(), page, response.status_code))
+            logger.error('\nLink: {}\nStatus code: {}\n'.format(page, response.status_code))
 
-    print('\n{}\nLink: {}\nFailed after {} tries\n'.format(datetime.datetime.now(), page, retries))
+    logger.critical('\nLink: {}\nFailed after {} tries\n'.format(page, retries))
     return None
 
 
@@ -67,7 +69,7 @@ def get_classes_on_college(page):
 
 
 def get_classes_on_page(page, title):
-    soup = get_page(BASE_URL + page, meta='{}: '.format(title))
+    soup = get_page(BASE_URL + page, meta='{} '.format(title))
 
     if soup is None:
         return []
@@ -92,7 +94,7 @@ def get_colleges_thread_runner(classes, class_list):
         page_url = c[1]
         class_section = c[0]
         try:
-            college_page = get_page(BASE_URL + page_url, meta='{}: '.format(class_section))
+            college_page = get_page(BASE_URL + page_url, meta='{} '.format(class_section))
         except:
             continue
 
@@ -110,7 +112,7 @@ def get_colleges_thread_runner(classes, class_list):
     
 
 def get_colleges_runner(page_url, class_section, class_list):
-    college_page = get_page(BASE_URL + page_url, meta='{}: '.format(class_section))
+    college_page = get_page(BASE_URL + page_url, meta='{} '.format(class_section))
 
     class_list.append(
         dict(
@@ -162,13 +164,13 @@ def get_links_to_terms(page):
 class Crawler:
 
     def __init__(self):
-        print("Created crawler: {}".format(str(self)))
+        logger.debug("Created crawler: {}".format(str(self)))
         self.quarters = []
         self.update()
     
     def update(self):
         page = get_page('https://termmasterschedule.drexel.edu/webtms_du/app',
-                        meta='{red}webTMS Homepage Init: {reset}'.format(red=RED,
+                        meta='{red}webTMS Homepage Init {reset}'.format(red=RED,
                                                                          reset=RESET))
 
         self.quarters = get_links_to_terms(page)

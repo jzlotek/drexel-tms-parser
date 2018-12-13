@@ -12,7 +12,7 @@ def run_crawler():
         crawler = Crawler()
         crawler.crawl()
     except Exception as e:
-        print('\n\n{}\n\n{}\n\n'.format(str(e), str(datetime.datetime.now())))
+        logger.error('\n\n{}\n\n{}\n\n'.format(str(e), str(datetime.datetime.now())))
 
 
 app = Flask(__name__,
@@ -38,6 +38,8 @@ def query_builder(query, database):
         database.instruction_method(int(query.get('instruction_method')))
     if query.get('credits'):
         database.credits(float(query.get('credits')))
+    if query.get('year'):
+        database.year(int(query.get('year')))
     
 
 @app.route('/course', methods=['GET'])
@@ -58,11 +60,11 @@ if __name__ == '__main__':
         os.mkdir('../dist/.tmp')
 
 
-    # crawler_process = multiprocessing.Process(target=run_crawler)
+    crawler_process = multiprocessing.Process(target=run_crawler)
 
     try:
-        # crawler_process.start()
-        app.run(debug=True)
+        crawler_process.start()
+        app.run(host="0.0.0.0", debug=True)
     except Exception as e:
         print(e)
-        # crawler_process.terminate()
+        crawler_process.terminate()

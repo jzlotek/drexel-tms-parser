@@ -37,7 +37,6 @@ class MongoDatabase(Database):
 
     def year(self, year):
         query = {'year': year}
-        logger.debug(query)
         self.query.update(query)
     
     def section(self, section):
@@ -59,7 +58,8 @@ class MongoDatabase(Database):
         self.query.update({'cn': cn})
 
     def subject_code(self, sc):
-        self.query.update({'sc': sc})
+        query = {'sc': sc}
+        self.query.update(query)
     
     def instruction_type(self, it):
         self.query.update({'it': it})
@@ -109,6 +109,7 @@ class MongoDatabase(Database):
             return section
 
         for key, value in self.query.items():
+            logger.debug('key: {}, value: {}', key, value)
             if key in info_fields:
                 info_dict.update({key: value})
             elif key in section_fields:
