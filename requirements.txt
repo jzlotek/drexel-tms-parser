@@ -1,5 +1,7 @@
 ansimarkup==1.4.0
 astroid==2.0.4
+autoflake==1.2
+autopep8==1.4.3
 beautifulsoup4==4.6.3
 better-exceptions-fork==0.2.1.post6
 bs4==0.0.1
@@ -9,6 +11,7 @@ chardet==3.0.4
 Click==7.0
 colorama==0.4.1
 dnspython==1.15.0
+flake8==3.6.0
 Flask==1.0.2
 idna==2.7
 isort==4.3.4
@@ -19,6 +22,8 @@ loguru==0.2.2
 MarkupSafe==1.0
 mccabe==0.6.1
 mongoengine==0.16.2
+pycodestyle==2.4.0
+pyflakes==2.0.0
 Pygments==2.3.0
 pylint==2.1.1
 pymongo==3.7.2

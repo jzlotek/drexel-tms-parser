@@ -14,15 +14,15 @@ def get_page(page, meta="", retries=3):
 
         if response.status_code == 200:
             logger.info('\t{blue}{bold}{}s elapsed {reset}{green}{}{reset}'
-                  .format(
-                          response.elapsed.total_seconds(),
-                          meta,
-                          green=GREEN,
-                          reset=RESET,
-                          bold=BOLD,
-                          blue=BLUE,
-                          red=RED
-                    ))
+                        .format(
+                            response.elapsed.total_seconds(),
+                            meta,
+                            green=GREEN,
+                            reset=RESET,
+                            bold=BOLD,
+                            blue=BLUE,
+                            red=RED
+                        ))
             try:
                 return bs4.BeautifulSoup(response.text, 'html.parser')
             except:
@@ -32,7 +32,6 @@ def get_page(page, meta="", retries=3):
 
     logger.critical('\nLink: {}\nFailed after {} tries\n'.format(page, retries))
     return None
-
 
 
 def get_college_page_sublinks(page):
@@ -83,7 +82,8 @@ def get_classes_on_page(page, title):
             child_tags.append(data)
             i += 1
 
-    child_tags = [json.loads(TMSClass(row).toJSON()) for row in list(filter(lambda row: row.has_data(), child_tags))]
+    child_tags = [json.loads(TMSClass(row).toJSON())
+                  for row in list(filter(lambda row: row.has_data(), child_tags))]
 
     return child_tags
 
@@ -109,7 +109,7 @@ def get_colleges_thread_runner(classes, class_list):
     lock.acquire(True)
     class_list.extend(tmp_list)
     lock.release()
-    
+
 
 def get_colleges_runner(page_url, class_section, class_list):
     college_page = get_page(BASE_URL + page_url, meta='{} '.format(class_section))
@@ -137,7 +137,8 @@ def get_colleges_from_side_left(page, threaded=False, num_threads=5):
             college_list[x % college_list_len].append(element)
 
         for college_sublist in college_list:
-            threads.append(threading.Thread(target=get_colleges_thread_runner, args=(college_sublist, class_list)))
+            threads.append(threading.Thread(target=get_colleges_thread_runner,
+                                            args=(college_sublist, class_list)))
 
         for thread in threads:
             thread.start()
@@ -167,25 +168,25 @@ class Crawler:
         logger.debug("Created crawler: {}".format(str(self)))
         self.quarters = []
         self.update()
-    
+
     def update(self):
         page = get_page('https://termmasterschedule.drexel.edu/webtms_du/app',
                         meta='{red}webTMS Homepage Init {reset}'.format(red=RED,
-                                                                         reset=RESET))
+                                                                        reset=RESET))
 
         self.quarters = get_links_to_terms(page)
 
     def crawl(self):
         for quarter in self.quarters:
             quarter[0] = "".join(quarter[0]
-                                    .replace('-', '_')
-                                    .replace('Quarter', '-Q')
-                                    .replace('Semester', '-S')
-                                    .replace('Fall', 'Fa')
-                                    .replace('Winter', 'Wi')
-                                    .replace('Spring', 'Sp')
-                                    .replace('Summer', 'Su')
-                                    .split(' ')
+                                 .replace('-', '_')
+                                 .replace('Quarter', '-Q')
+                                 .replace('Semester', '-S')
+                                 .replace('Fall', 'Fa')
+                                 .replace('Winter', 'Wi')
+                                 .replace('Spring', 'Sp')
+                                 .replace('Summer', 'Su')
+                                 .split(' ')
                                  )
 
             page = get_page(BASE_URL + quarter[1], meta='{cyan}{}: '.format(quarter[0], cyan=CYAN))

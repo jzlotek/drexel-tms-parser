@@ -7,6 +7,7 @@ from db import database
 import json
 from utils import Logger
 
+
 def run_crawler():
     try:
         crawler = Crawler()
@@ -42,12 +43,12 @@ def query_builder(query, database):
         database.year(int(query.get('year')))
     if query.get('days'):
         database.meeting(query.get('days'), 'days')
-    
+
 
 @app.route('/course', methods=['GET'])
 def get_course():
     query_builder(request.args, database)
-    
+
     return Response(json.dumps(database.execute()), mimetype='application/json')
 
 
@@ -60,7 +61,6 @@ if __name__ == '__main__':
 
     if '.tmp' not in os.listdir('../dist'):
         os.mkdir('../dist/.tmp')
-
 
     # crawler_process = multiprocessing.Process(target=run_crawler)
 

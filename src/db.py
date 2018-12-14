@@ -9,6 +9,7 @@ from utils import logger
 
 logger.info(database.create_course_section.__doc__)
 
+
 def get_instruction_method(im):
     if im == "Face to Face":
         return 0
@@ -18,6 +19,7 @@ def get_instruction_method(im):
         return 2
     else:
         return 3
+
 
 def create_dt_obj(dt):
     try:
@@ -35,7 +37,8 @@ def get_class_info(sc, cn, it, isQuarter, im):
         return res.to_json()
     except:
         return None
-        
+
+
 def get_class_info_by_id(id):
     try:
         res = ClassInfo.objects.get(id=ObjectId(id))
@@ -43,20 +46,21 @@ def get_class_info_by_id(id):
     except:
         return None
 
+
 def get_and_import_info(college, isQuarter, cn, sc, it, title, cr, im):
     c = get_class_info(sc, cn, it, isQuarter, im)
-    
+
     if c is None:
         logger.error('{} {} {} {} {} not found', sc, cn, it, isQuarter, im)
-        c = ClassInfo(college=college, isQuarter=isQuarter, cn=cn, sc=sc, it=it, title=title, cr=cr, im=im).save().to_json()
+        c = ClassInfo(college=college, isQuarter=isQuarter, cn=cn, sc=sc,
+                      it=it, title=title, cr=cr, im=im).save().to_json()
         logger.success('{} {} {} {} {} created', sc, cn, it, isQuarter, im)
 
-    
     c = ObjectId(json.loads(c).get('_id').get('$oid'))
     logger.info('ID: {}', c)
 
     return c
-   
+
 
 for fname in os.listdir('./dist/.tmp'):
     with open('./dist/.tmp/' + fname) as file:

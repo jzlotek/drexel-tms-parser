@@ -14,6 +14,7 @@ import mongoengine.errors
 import copy
 from utils import logger
 
+
 class MongoDatabase(Database):
 
     def __init__(self, db):
@@ -34,17 +35,16 @@ class MongoDatabase(Database):
         else:
             logger.success('{}'.format(str(self.db)))
 
-
     def year(self, year):
         query = {'year': year}
         self.query.update(query)
-    
+
     def section(self, section):
         self.query.update({'sec': section})
-    
+
     def crn(self, crn):
         self.query.update({'crn': crn})
-    
+
     def meeting(self, meeting, type):
         if type == 'days':
             accepted = 'MTWRF'
@@ -57,23 +57,23 @@ class MongoDatabase(Database):
 
     def instructor(self, instructor):
         self.query.update({'instructor': instructor})
-    
+
     def college(self, college):
         self.query.update({'college': college})
-    
+
     def course_number(self, cn):
         self.query.update({'cn': cn})
 
     def subject_code(self, sc):
         query = {'sc': sc}
         self.query.update(query)
-    
+
     def instruction_type(self, it):
         self.query.update({'it': it})
 
     def instruction_method(self, im):
         self.query.update({'im': im})
-    
+
     def credits(self, cr):
         self.query.update({'cr': cr})
 
@@ -129,17 +129,17 @@ class MongoDatabase(Database):
             else:
                 logger.error('Unknown key/value pair: ', key, value)
         meeting_dict = meeting_dict.get('meeting')
-        
+
         if len(info_dict.items()) != 0:
             course_info_list = json.loads(ClassInfo.objects(__raw__=info_dict).to_json())
             course_id_list = [
                 c.get('_id').get('$oid') for c in course_info_list
             ]
-            
+
             if meeting_dict and meeting_dict.get('days') is not None and len(meeting_dict.get('days')) > 0:
                 course_sections = json.loads(
                     Section.objects(
-                        meeting__days=meeting_dict.get('days'), 
+                        meeting__days=meeting_dict.get('days'),
                         course__in=course_id_list,
                         __raw__=section_dict
                     ).to_json()
@@ -151,7 +151,6 @@ class MongoDatabase(Database):
                         __raw__=section_dict
                     ).to_json()
                 )
-
 
             for section in course_sections:
                 course_info = list(
@@ -166,15 +165,11 @@ class MongoDatabase(Database):
                         del tmp_course['_id']
 
                     section.update({'course': tmp_course})
-                
+
                 if section.get('_id'):
                     del section['_id']
 
-            
             return course_sections
-
-        
-
 
         self.query = dict()
 
@@ -183,16 +178,16 @@ class MongoDatabase(Database):
 
     @staticmethod
     def create_course_section(
-        course: str,
-        year: int,
-        instructor: str,
-        crn: int,
-        crnLink: str,
-        sec: str,
-        meeting: dict,
-        maxEnroll: int,
-        enrolled: int,
-        semester: str):
+            course: str,
+            year: int,
+            instructor: str,
+            crn: int,
+            crnLink: str,
+            sec: str,
+            meeting: dict,
+            maxEnroll: int,
+            enrolled: int,
+            semester: str):
         """
             course: ObjectId of the course
             year: The year it is (beginning in Septeber for the year)

@@ -7,7 +7,7 @@ class ClassInfo(Document):
     # Course Number
     cn = StringField(required=True)
     # Subject Code i.e. CS, UNIV, MATH
-    # TODO: separate collections by the sc field to make lookups 
+    # TODO: separate collections by the sc field to make lookups
     # faster when looking for a class in a sqecific subject
     sc = StringField(required=True)
     # Instruction Type

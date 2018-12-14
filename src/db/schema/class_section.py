@@ -13,6 +13,3 @@ class Section(Document):
     instructor = StringField(required=True)
     maxEnroll = IntField(required=True)
     enrolled = IntField(required=True)
-
-
-
