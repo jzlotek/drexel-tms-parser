@@ -15,9 +15,12 @@ services:
       - "5000:5000"
     volumes:
       - .:/home/drexel-tms-parser
-  drexel-tms-injest:
-    image: drexel-tms-injest
-    container_name: drexel-tms-injest
+    networks:
+    - d-tms-network
+
+  drexel-tms-ingest:
+    image: drexel-tms-ingest
+    container_name: drexel-tms-ingest
     env_file:
     - ./src/db/.env
     build:
@@ -30,3 +33,20 @@ services:
       - "5001:5001"
     volumes:
     - .:/home/drexel-tms-parser
+    networks:
+      - d-tms-network
+
+  webserver:
+    image: nginx:alpine
+    container_name: drexel-tms-webserver
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    networks:
+      - d-tms-network
+
+networks: 
+  d-tms-network:
+    driver: bridge

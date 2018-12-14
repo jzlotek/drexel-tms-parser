@@ -135,14 +135,23 @@ class MongoDatabase(Database):
             course_id_list = [
                 c.get('_id').get('$oid') for c in course_info_list
             ]
+            
+            if meeting_dict and meeting_dict.get('days') is not None and len(meeting_dict.get('days')) > 0:
+                course_sections = json.loads(
+                    Section.objects(
+                        meeting__days=meeting_dict.get('days'), 
+                        course__in=course_id_list,
+                        __raw__=section_dict
+                    ).to_json()
+                )
+            else:
+                course_sections = json.loads(
+                    Section.objects(
+                        course__in=course_id_list,
+                        __raw__=section_dict
+                    ).to_json()
+                )
 
-            course_sections = json.loads(
-                Section.objects(
-                    meeting__days=meeting_dict.get('days'), 
-                    course__in=course_id_list,
-                    __raw__=section_dict
-                ).to_json()
-            )
 
             for section in course_sections:
                 course_info = list(
