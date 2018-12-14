@@ -40,6 +40,8 @@ def query_builder(query, database):
         database.credits(float(query.get('credits')))
     if query.get('year'):
         database.year(int(query.get('year')))
+    if query.get('days'):
+        database.meeting(query.get('days'), 'days')
     
 
 @app.route('/course', methods=['GET'])
@@ -60,11 +62,11 @@ if __name__ == '__main__':
         os.mkdir('../dist/.tmp')
 
 
-    crawler_process = multiprocessing.Process(target=run_crawler)
+    # crawler_process = multiprocessing.Process(target=run_crawler)
 
     try:
-        crawler_process.start()
+        # crawler_process.start()
         app.run(host="0.0.0.0", debug=True)
     except Exception as e:
         print(e)
-        crawler_process.terminate()
+        # crawler_process.terminate()
