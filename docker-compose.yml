@@ -25,6 +25,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
       args:
+        PORT: 4000
         SERVLET: crawler_runner.py
     volumes:
       - .:/home/drexel-tms-parser
