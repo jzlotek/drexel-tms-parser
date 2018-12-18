@@ -2,19 +2,9 @@ from flask import Flask, render_template, Response, request
 import datetime
 import multiprocessing
 import os
-from crawler.tms_crawler import Crawler
 from db import database
 import json
 from utils import Logger
-
-
-def run_crawler():
-    try:
-        crawler = Crawler()
-        crawler.crawl()
-    except Exception as e:
-        logger.error('\n\n{}\n\n{}\n\n'.format(str(e), str(datetime.datetime.now())))
-
 
 app = Flask(__name__,
             static_folder="../dist/static",
@@ -62,11 +52,7 @@ if __name__ == '__main__':
     if '.tmp' not in os.listdir('../dist'):
         os.mkdir('../dist/.tmp')
 
-    # crawler_process = multiprocessing.Process(target=run_crawler)
-
     try:
-        # crawler_process.start()
         app.run(host="0.0.0.0", debug=True)
     except Exception as e:
         print(e)
-        # crawler_process.terminate()

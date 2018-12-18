@@ -1,9 +1,10 @@
 from flask import Flask, request, Response
+import db
 
 app = Flask(__name__)
 
 
-@app.route('/injest', methods=['POST'])
+@app.route('/ingest', methods=['POST'])
 def ingest():
     if request.json:
         print(request.json)

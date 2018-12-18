@@ -1,8 +1,8 @@
 version: "3.4"
 services:
-  drexel-tms-parser:
-    image: drexel-tms-parser-image
-    container_name: drexel-tms-parser-webserver
+  drexel-tms-webserver:
+    image: drexel-tms-webserver-image
+    container_name: drexel-tms-webserver
     env_file:
      - ./src/db/.env
     build:
@@ -16,10 +16,25 @@ services:
     volumes:
       - .:/home/drexel-tms-parser
     networks:
-    - d-tms-network
+      - drexel-tms-network
+  
+  drexel-tms-crawler:
+    image: drexel-tms-crawler-image
+    container_name: drexel-tms-crawler
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        SERVLET: crawler_runner.py
+    volumes:
+      - .:/home/drexel-tms-parser
+    networks:
+      - drexel-tms-network
+    links:
+      - drexel-tms-ingest
 
   drexel-tms-ingest:
-    image: drexel-tms-ingest
+    image: drexel-tms-ingest-image
     container_name: drexel-tms-ingest
     env_file:
     - ./src/db/.env
@@ -32,21 +47,21 @@ services:
     ports:
       - "5001:5001"
     volumes:
-    - .:/home/drexel-tms-parser
+      - .:/home/drexel-tms-parser
     networks:
-      - d-tms-network
+      - drexel-tms-network
 
   webserver:
     image: nginx:alpine
-    container_name: drexel-tms-webserver
+    container_name: drexel-tms-nginx
     restart: unless-stopped
     tty: true
     ports:
       - "8080:8080"
       - "8443:8443"
     networks:
-      - d-tms-network
+      - drexel-tms-network
 
 networks: 
-  d-tms-network:
+  drexel-tms-network:
     driver: bridge

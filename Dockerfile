@@ -2,7 +2,7 @@ FROM python:3.7.1-stretch
 
 ARG PORT
 
-ARG SERVLET
+ARG SERVLET=4000
 ENV SERVLET=$SERVLET
 
 RUN git clone https://github.com/jzlotek/drexel-tms-parser.git /home/drexel-tms-parser

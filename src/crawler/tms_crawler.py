@@ -177,6 +177,7 @@ class Crawler:
         self.quarters = get_links_to_terms(page)
 
     def crawl(self):
+        logger.info("Starting to crawl pages")
         for quarter in self.quarters:
             quarter[0] = "".join(quarter[0]
                                  .replace('-', '_')
@@ -195,6 +196,9 @@ class Crawler:
                 continue
 
             all_classes = get_colleges_from_side_left(page, threaded=True)
-
-            with open('./.tmp/{}.json'.format(quarter[0]), 'w') as _file:
-                _file.write(json.dumps(all_classes, cls=Encoder, indent=4))
+            requests.post('http://localhost:5001/ingest', json=dict(
+                data=json.dumps(all_classes, cls=Encoder),
+                name=quarter[0]
+            ))
+            # with open('./.tmp/{}.json'.format(quarter[0]), 'w') as _file:
+                # _file.write(json.dumps(all_classes, cls=Encoder, indent=4))
