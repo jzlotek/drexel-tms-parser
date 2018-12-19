@@ -33,6 +33,8 @@ services:
       - drexel-tms-network
     links:
       - drexel-tms-ingest
+    depends_on:
+      - drexel-tms-ingest
 
   drexel-tms-ingest:
     image: drexel-tms-ingest-image

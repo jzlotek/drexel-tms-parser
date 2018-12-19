@@ -33,7 +33,8 @@ def create_dt_obj(dt):
 
 def get_class_info(sc, cn, it, isQuarter, im):
     try:
-        res = ClassInfo.objects.get(sc=sc, cn=cn, it=it, isQuarter=isQuarter, im=im)
+        res = ClassInfo.objects.get(
+            sc=sc, cn=cn, it=it, isQuarter=isQuarter, im=im)
         return res.to_json()
     except:
         return None
@@ -63,7 +64,7 @@ def get_and_import_info(college, isQuarter, cn, sc, it, title, cr, im):
 
 
 def import_to_db(json_data, fname):
-    j = json.load(json_data)
+    j = json.loads(json_data)
     for college in j:
         college_name = college.get('collegeName')
 
@@ -94,7 +95,8 @@ def import_to_db(json_data, fname):
                         _class.get('SEC').upper(),
                         create_dt_obj(_class.get('DT')),
                         int(_class.get('MAX')) if _class.get('MAX') else 0,
-                        int(_class.get('ENROLLED')) if _class.get('ENROLLED') else 0,
+                        int(_class.get('ENROLLED')) if _class.get(
+                            'ENROLLED') else 0,
                         str(fname.split('-')[0]).upper()
                     )
                     course.save()

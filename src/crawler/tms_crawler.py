@@ -28,9 +28,11 @@ def get_page(page, meta="", retries=3):
             except:
                 return None
         else:
-            logger.error('\nLink: {}\nStatus code: {}\n'.format(page, response.status_code))
+            logger.error('\nLink: {}\nStatus code: {}\n'.format(
+                page, response.status_code))
 
-    logger.critical('\nLink: {}\nFailed after {} tries\n'.format(page, retries))
+    logger.critical(
+        '\nLink: {}\nFailed after {} tries\n'.format(page, retries))
     return None
 
 
@@ -94,7 +96,8 @@ def get_colleges_thread_runner(classes, class_list):
         page_url = c[1]
         class_section = c[0]
         try:
-            college_page = get_page(BASE_URL + page_url, meta='{} '.format(class_section))
+            college_page = get_page(
+                BASE_URL + page_url, meta='{} '.format(class_section))
         except:
             continue
 
@@ -112,7 +115,8 @@ def get_colleges_thread_runner(classes, class_list):
 
 
 def get_colleges_runner(page_url, class_section, class_list):
-    college_page = get_page(BASE_URL + page_url, meta='{} '.format(class_section))
+    college_page = get_page(BASE_URL + page_url,
+                            meta='{} '.format(class_section))
 
     class_list.append(
         dict(
@@ -128,7 +132,8 @@ def get_colleges_from_side_left(page, threaded=False, num_threads=5):
     class_list = []
 
     colleges = page.find(id='sideLeft').find_all('a')
-    colleges = [[college.text, college.get('href')] for college in colleges if college is not None]
+    colleges = [[college.text, college.get('href')]
+                for college in colleges if college is not None]
 
     if threaded:
         college_list = [[] for _ in range(num_threads)]
@@ -190,15 +195,16 @@ class Crawler:
                                  .split(' ')
                                  )
 
-            page = get_page(BASE_URL + quarter[1], meta='{cyan}{}: '.format(quarter[0], cyan=CYAN))
+            page = get_page(
+                BASE_URL + quarter[1], meta='{cyan}{}: '.format(quarter[0], cyan=CYAN))
 
             if page is None:
                 continue
 
             all_classes = get_colleges_from_side_left(page, threaded=True)
-            requests.post('http://localhost:5001/ingest', json=dict(
+            requests.post('http://drexel-tms-ingest:5001/ingest', json=dict(
                 data=json.dumps(all_classes, cls=Encoder),
                 name=quarter[0]
             ))
             # with open('./.tmp/{}.json'.format(quarter[0]), 'w') as _file:
-                # _file.write(json.dumps(all_classes, cls=Encoder, indent=4))
+            # _file.write(json.dumps(all_classes, cls=Encoder, indent=4))

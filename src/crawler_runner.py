@@ -13,7 +13,6 @@ def run_crawler():
 
 if __name__ == '__main__':
     logger.info("Starting crawler")
-
     crawler_process = multiprocessing.Process(target=run_crawler)
 
     try:

@@ -26,7 +26,8 @@ class RowData(SerializeableJSON):
         while field is not None:
             if isinstance(field, bs4.element.Tag):
                 if field.a is not None:
-                    self.row.append([field.text.strip(), str(field.a.get('href'))])
+                    self.row.append(
+                        [field.text.strip(), str(field.a.get('href'))])
                 else:
                     self.row.append(field.text.strip())
 
@@ -53,11 +54,14 @@ def to_dt(time):
 def get_credits(page):
     page = requests.get(page).text
     page = bs4.BeautifulSoup(page, 'html.parser')
-    cred = page.find(class_="tableHeader", text="Credits").parent.find(class_="even")
+    cred = page.find(class_="tableHeader",
+                     text="Credits").parent.find(class_="even")
     cred = cred.text.strip()
-    enroll = page.find(class_="tableHeader", text="Enroll").parent.find(class_="odd")
+    enroll = page.find(class_="tableHeader",
+                       text="Enroll").parent.find(class_="odd")
     enroll = int(enroll.text.strip())
-    max_enroll = page.find(class_="tableHeader", text="Max Enroll").parent.find(class_="even")
+    max_enroll = page.find(class_="tableHeader",
+                           text="Max Enroll").parent.find(class_="even")
     max_enroll = int(max_enroll.text.strip())
     return [cred, enroll, max_enroll]
 

@@ -1,14 +1,17 @@
 from flask import Flask, request, Response
-import db
+from db_functions import import_to_db
+from utils import logger
 
 app = Flask(__name__)
 
 
 @app.route('/ingest', methods=['POST'])
 def ingest():
+    logger.info(request)
     if request.json:
-        print(request.json)
         # created
+        import_to_db(request.json.get('data'), request.json.get('name'))
+
         return Response("", status=201)
 
     return Response("", status=400)

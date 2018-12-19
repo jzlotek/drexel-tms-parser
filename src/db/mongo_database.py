@@ -131,7 +131,8 @@ class MongoDatabase(Database):
         meeting_dict = meeting_dict.get('meeting')
 
         if len(info_dict.items()) != 0:
-            course_info_list = json.loads(ClassInfo.objects(__raw__=info_dict).to_json())
+            course_info_list = json.loads(
+                ClassInfo.objects(__raw__=info_dict).to_json())
             course_id_list = [
                 c.get('_id').get('$oid') for c in course_info_list
             ]
@@ -155,7 +156,8 @@ class MongoDatabase(Database):
             for section in course_sections:
                 course_info = list(
                     filter(
-                        lambda ci: ci.get('_id').get('$oid') == section.get('course'),
+                        lambda ci: ci.get('_id').get(
+                            '$oid') == section.get('course'),
                         course_info_list
                     )
                 )
