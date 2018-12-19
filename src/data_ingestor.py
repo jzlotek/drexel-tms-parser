@@ -1,5 +1,5 @@
 from flask import Flask, request, Response
-from db_functions import import_to_db
+from db.db_functions import import_to_db
 from utils import logger
 
 app = Flask(__name__)
@@ -17,4 +17,4 @@ def ingest():
     return Response("", status=400)
 
 
-app.run(host="0.0.0.0", port=5001, debug=True)
+app.run(host="0.0.0.0", port=5001, debug=True, threaded=True)

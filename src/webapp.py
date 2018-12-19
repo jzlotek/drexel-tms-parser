@@ -1,10 +1,8 @@
-from flask import Flask, render_template, Response, request
-import datetime
-import multiprocessing
+from flask import Flask, Response, request
 import os
 from db import database
 import json
-from utils import Logger
+from utils import logger
 
 app = Flask(__name__,
             static_folder="../dist/static",
@@ -12,13 +10,12 @@ app = Flask(__name__,
 
 
 def query_builder(query, database):
-
     if query.get('subject'):
         database.subject_code(query.get('subject'))
     if query.get('section'):
         database.section(query.get('section'))
     if query.get('crn'):
-        database.crn(int(query.get('crn')))
+        database.crn(query.get('crn'))
     if query.get('college'):
         database.college(query.get('college'))
     if query.get('instructor'):
@@ -26,11 +23,11 @@ def query_builder(query, database):
     if query.get('course_number'):
         database.course_number(query.get('course_number'))
     if query.get('instruction_method'):
-        database.instruction_method(int(query.get('instruction_method')))
+        database.instruction_method(query.get('instruction_method'))
     if query.get('credits'):
-        database.credits(float(query.get('credits')))
+        database.credits(query.get('credits'))
     if query.get('year'):
-        database.year(int(query.get('year')))
+        database.year(query.get('year'))
     if query.get('days'):
         database.meeting(query.get('days'), 'days')
 
@@ -43,8 +40,6 @@ def get_course():
 
 
 if __name__ == '__main__':
-    logger = Logger().logger()
-    logger.info("Starting main")
     if 'dist' not in os.listdir('../'):
         logger.debug("Making dist folders")
         os.mkdir('../dist')
@@ -52,7 +47,10 @@ if __name__ == '__main__':
     if '.tmp' not in os.listdir('../dist'):
         os.mkdir('../dist/.tmp')
 
+    debug = False
+    if os.environ.get('DEBUG'):
+        debug = bool(os.environ.get('DEBUG'))
     try:
-        app.run(host="0.0.0.0", debug=True)
+        app.run(host="0.0.0.0", debug=debug, threaded=(not debug))
     except Exception as e:
         print(e)

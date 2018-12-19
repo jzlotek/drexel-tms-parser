@@ -21,7 +21,7 @@ class Database(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def meeting(self, meeting):
+    def meeting(self, meeting, type_):
         pass
 
     @abc.abstractmethod

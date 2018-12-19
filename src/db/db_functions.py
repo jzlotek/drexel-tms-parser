@@ -1,13 +1,9 @@
 from db import database
-import datetime
 import os
 import json
-from db.schema.class_section import Section
 from db.schema.class_info import ClassInfo
 from bson.objectid import ObjectId
 from utils import logger
-
-logger.info(database.create_course_section.__doc__)
 
 
 def get_instruction_method(im):
@@ -53,9 +49,14 @@ def get_and_import_info(college, isQuarter, cn, sc, it, title, cr, im):
 
     if c is None:
         logger.error('{} {} {} {} {} not found', sc, cn, it, isQuarter, im)
-        c = ClassInfo(college=college, isQuarter=isQuarter, cn=cn, sc=sc,
-                      it=it, title=title, cr=cr, im=im).save().to_json()
-        logger.success('{} {} {} {} {} created', sc, cn, it, isQuarter, im)
+        try:
+            c = ClassInfo(college=college, isQuarter=isQuarter, cn=cn, sc=sc,
+                          it=it, title=title, cr=cr, im=im).save().to_json()
+            logger.success('{} {} {} {} {} created', sc, cn, it, isQuarter, im)
+        except:
+            logger.critical('{} {} {} {} {} failed. Perhaps the connection to the db is severed',
+                            sc, cn, it, isQuarter, im)
+            return ''
 
     c = ObjectId(json.loads(c).get('_id').get('$oid'))
     logger.info('ID: {}', c)

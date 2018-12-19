@@ -1,11 +1,7 @@
 from db.database_interface import Database
-from bson.codec_options import CodecOptions
-from bson.raw_bson import RawBSONDocument
 from mongoengine import connect
 import pymongo.errors
-from pymongo import collection
 from pymongo import read_preferences
-import datetime
 from db.schema.class_section import Section
 from db.schema.class_info import ClassInfo
 from bson import ObjectId
@@ -36,18 +32,22 @@ class MongoDatabase(Database):
             logger.success('{}'.format(str(self.db)))
 
     def year(self, year):
-        query = {'year': year}
+        query = {'year': int(year)}
         self.query.update(query)
 
     def section(self, section):
         self.query.update({'sec': section})
 
     def crn(self, crn):
-        self.query.update({'crn': crn})
+        self.query.update({'crn': int(crn)})
 
-    def meeting(self, meeting, type):
-        if type == 'days':
+    def meeting(self, meeting, type_):
+        if type_ == 'days':
             accepted = 'MTWRF'
+            if meeting.upper() == "TBD":
+                query = {'meeting': {'days': meeting}}
+                self.query.update(query)
+                return
             for index, letter in enumerate(meeting):
                 if letter not in accepted:
                     meeting.splice(index, 1)
@@ -72,10 +72,10 @@ class MongoDatabase(Database):
         self.query.update({'it': it})
 
     def instruction_method(self, im):
-        self.query.update({'im': im})
+        self.query.update({'im': int(im)})
 
     def credits(self, cr):
-        self.query.update({'cr': cr})
+        self.query.update({'cr': float(cr)})
 
     def execute(self):
         info_dict = dict()
@@ -199,7 +199,7 @@ class MongoDatabase(Database):
             sec: Section -> 101, 201, A, B
             meeting: {'days': 'MTWRF/TBD', 'times': [start, end]}
             maxEnroll: Int
-            enrolled: Int    
+            enrolled: Int
         """
         course = Section(
             course=course,
