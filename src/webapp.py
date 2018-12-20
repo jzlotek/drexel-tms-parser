@@ -9,32 +9,9 @@ app = Flask(__name__,
             template_folder="../dist")
 
 
-def query_builder(query, database):
-    if query.get('subject'):
-        database.subject_code(query.get('subject'))
-    if query.get('section'):
-        database.section(query.get('section'))
-    if query.get('crn'):
-        database.crn(query.get('crn'))
-    if query.get('college'):
-        database.college(query.get('college'))
-    if query.get('instructor'):
-        database.instructor(query.get('instructor'))
-    if query.get('course_number'):
-        database.course_number(query.get('course_number'))
-    if query.get('instruction_method'):
-        database.instruction_method(query.get('instruction_method'))
-    if query.get('credits'):
-        database.credits(query.get('credits'))
-    if query.get('year'):
-        database.year(query.get('year'))
-    if query.get('days'):
-        database.meeting(query.get('days'), 'days')
-
-
 @app.route('/course', methods=['GET'])
 def get_course():
-    query_builder(request.args, database)
+    database.query_builder(request.args)
 
     return Response(json.dumps(database.execute()), mimetype='application/json')
 

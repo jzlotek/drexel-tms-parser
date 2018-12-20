@@ -57,6 +57,28 @@ class Database(abc.ABC):
     def execute(self):
         pass
 
+    def query_builder(self, query):
+        if query.get('subject'):
+            self.subject_code(query.get('subject'))
+        if query.get('section'):
+            self.section(query.get('section'))
+        if query.get('crn'):
+            self.crn(query.get('crn'))
+        if query.get('college'):
+            self.college(query.get('college'))
+        if query.get('instructor'):
+            self.instructor(query.get('instructor'))
+        if query.get('course_number'):
+            self.course_number(query.get('course_number'))
+        if query.get('instruction_method'):
+            self.instruction_method(query.get('instruction_method'))
+        if query.get('credits'):
+            self.credits(query.get('credits'))
+        if query.get('year'):
+            self.year(query.get('year'))
+        if query.get('days'):
+            self.meeting(query.get('days'), 'days')
+
     @abc.abstractmethod
     def get_query(self):
         pass

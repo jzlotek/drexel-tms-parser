@@ -1,7 +1,7 @@
 from db import database
 import os
 import json
-from db.schema.class_info import ClassInfo
+from db.mongo.schema import ClassInfo
 from bson.objectid import ObjectId
 from utils import logger
 

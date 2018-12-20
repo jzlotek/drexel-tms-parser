@@ -7,8 +7,8 @@ def run_crawler():
     try:
         crawler = Crawler()
         crawler.crawl()
-    except Exception as e:
-        logger.error('{}'.format(str(e)))
+    except Exception as ex:
+        logger.error('{}', ex)
 
 
 if __name__ == '__main__':

@@ -2,8 +2,8 @@ from db.database_interface import Database
 from mongoengine import connect
 import pymongo.errors
 from pymongo import read_preferences
-from db.schema.class_section import Section
-from db.schema.class_info import ClassInfo
+from db.mongo.schema import Section
+from db.mongo.schema import ClassInfo
 from bson import ObjectId
 import json
 import mongoengine.errors

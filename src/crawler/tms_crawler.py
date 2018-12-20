@@ -2,10 +2,10 @@ import requests
 import bs4
 import json
 import threading
-import datetime
 from crawler.constants import BASE_URL, GREEN, RESET, BOLD, BLUE, RED, CYAN
 from crawler.utility import RowData, TMSClass, Encoder
 from utils import logger
+import multiprocessing
 
 
 def get_page(page, meta="", retries=3):
@@ -13,8 +13,9 @@ def get_page(page, meta="", retries=3):
         response = requests.get(page)
 
         if response.status_code == 200:
-            logger.info('\t{blue}{bold}{}s elapsed {reset}{green}{}{reset}'
+            logger.info('Process: {}\t{blue}{bold}{}s elapsed {reset}{green}{}{reset}'
                         .format(
+                            multiprocessing.process.current_process().pid,
                             response.elapsed.total_seconds(),
                             meta,
                             green=GREEN,
@@ -167,11 +168,39 @@ def get_links_to_terms(page):
     return ret
 
 
-class Crawler:
+def run_on_page(quarter):
+    quarter[0] = "".join(quarter[0]
+                         .replace('-', '_')
+                         .replace('Quarter', '-Q')
+                         .replace('Semester', '-S')
+                         .replace('Fall', 'Fa')
+                         .replace('Winter', 'Wi')
+                         .replace('Spring', 'Sp')
+                         .replace('Summer', 'Su')
+                         .split(' ')
+                         )
 
-    def __init__(self):
+    page = get_page(
+        BASE_URL + quarter[1], meta='Process: {}\t{cyan}{}: '.format(multiprocessing.process.current_process().pid, quarter[0], cyan=CYAN)
+    )
+
+    if page is None:
+        return
+
+    all_classes = get_colleges_from_side_left(page, threaded=True)
+    requests.post('http://drexel-tms-ingest:5001/ingest', json=dict(
+        data=json.dumps(all_classes, cls=Encoder),
+        name=quarter[0]
+    ))
+
+    return
+
+
+class Crawler:
+    def __init__(self, mp=False):
         logger.debug("Created crawler: {}".format(str(self)))
         self.quarters = []
+        self.multiprocessing = mp
         self.update()
 
     def update(self):
@@ -183,28 +212,19 @@ class Crawler:
 
     def crawl(self):
         logger.info("Starting to crawl pages")
-        for quarter in self.quarters:
-            quarter[0] = "".join(quarter[0]
-                                 .replace('-', '_')
-                                 .replace('Quarter', '-Q')
-                                 .replace('Semester', '-S')
-                                 .replace('Fall', 'Fa')
-                                 .replace('Winter', 'Wi')
-                                 .replace('Spring', 'Sp')
-                                 .replace('Summer', 'Su')
-                                 .split(' ')
-                                 )
+        processes = []
+        if self.multiprocessing:
+            for quarter in self.quarters:
 
-            page = get_page(
-                BASE_URL + quarter[1], meta='{cyan}{}: '.format(quarter[0], cyan=CYAN))
+                process = multiprocessing.Process(target=run_on_page, args=(quarter,))
+                processes.append(process)
+                process.start()
 
-            if page is None:
-                continue
+            for process in processes:
+                process.join()
+        else:
+            for quarter in self.quarters:
+                run_on_page(quarter)
 
-            all_classes = get_colleges_from_side_left(page, threaded=True)
-            requests.post('http://drexel-tms-ingest:5001/ingest', json=dict(
-                data=json.dumps(all_classes, cls=Encoder),
-                name=quarter[0]
-            ))
             # with open('./.tmp/{}.json'.format(quarter[0]), 'w') as _file:
             # _file.write(json.dumps(all_classes, cls=Encoder, indent=4))
