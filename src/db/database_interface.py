@@ -52,6 +52,14 @@ class Database(abc.ABC):
     def credits(self, cr):
         pass
 
+    @abc.abstractmethod
+    def before(self, time):
+        pass
+
+    @abc.abstractmethod
+    def after(self, time):
+        pass
+
     # excecute stored query
     @abc.abstractmethod
     def execute(self):
@@ -78,6 +86,10 @@ class Database(abc.ABC):
             self.year(query.get('year'))
         if query.get('days'):
             self.meeting(query.get('days'), 'days')
+        if query.get('before'):
+            self.before(query.get('before'))
+        if query.get('after'):
+            self.after(query.get('after'))
 
     @abc.abstractmethod
     def get_query(self):

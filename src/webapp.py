@@ -1,4 +1,4 @@
-from flask import Flask, Response, request
+from flask import Flask, Response, request, render_template
 import os
 from db import database
 import json
@@ -15,6 +15,11 @@ def get_course():
 
     return Response(json.dumps(database.execute()), mimetype='application/json')
 
+@app.route('/', methods=["GET"])
+def get_home():
+    # needs the index to be in the dist folder to work
+    return render_template('index.html')
+
 
 if __name__ == '__main__':
     if 'dist' not in os.listdir('../'):
@@ -30,4 +35,4 @@ if __name__ == '__main__':
     try:
         app.run(host="0.0.0.0", debug=debug, threaded=(not debug))
     except Exception as e:
-        print(e)
+        logger.error(e)

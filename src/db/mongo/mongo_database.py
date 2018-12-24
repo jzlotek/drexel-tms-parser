@@ -77,6 +77,12 @@ class MongoDatabase(Database):
     def credits(self, cr):
         self.query.update({'cr': float(cr)})
 
+    def before(self, time):
+        self.query.update({'before': time})
+
+    def after(self, time):
+        self.query.update({'after': time})
+
     def execute(self):
         info_dict = dict()
         info_fields = [
@@ -92,7 +98,9 @@ class MongoDatabase(Database):
             'instructor',
             'year',
             'sec',
-            'crn'
+            'crn',
+            'before',
+            'after'
         ]
         meeting_dict = dict()
         meeting_fields = [

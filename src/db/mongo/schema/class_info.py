@@ -1,4 +1,4 @@
-from mongoengine import StringField, IntField, FloatField, BooleanField, Document
+from mongoengine import StringField, FloatField, BooleanField, Document
 
 
 class ClassInfo(Document):
@@ -18,6 +18,6 @@ class ClassInfo(Document):
     # 1: Online
     # 2: Hybrid
     # 3: Community Based Learning
-    im = IntField(required=True)
+    im = StringField(required=True)
     # Credits
     cr = FloatField(required=True)

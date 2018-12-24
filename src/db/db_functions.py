@@ -84,7 +84,7 @@ def import_to_db(json_data, fname):
                         _class.get('IT'),
                         _class.get('CT'),
                         float(_class.get('CR')) if _class.get('CR') else 0.0,
-                        get_instruction_method(_class.get('IM'))
+                        _class.get('IM')
                     )
 
                     course = database.create_course_section(
