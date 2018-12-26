@@ -22,6 +22,8 @@ def get_home():
 
 
 if __name__ == '__main__':
+    PORT = int(os.environ['PORT']) if os.environ['PORT'] else 5000
+
     if 'dist' not in os.listdir('../'):
         logger.debug("Making dist folders")
         os.mkdir('../dist')
@@ -33,6 +35,6 @@ if __name__ == '__main__':
     if os.environ.get('DEBUG'):
         debug = bool(os.environ.get('DEBUG'))
     try:
-        app.run(host="0.0.0.0", debug=debug, threaded=(not debug))
+        app.run(port=PORT, debug=debug, threaded=(not debug))
     except Exception as e:
         logger.error(e)
