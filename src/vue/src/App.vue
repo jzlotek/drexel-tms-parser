@@ -1,17 +1,20 @@
 <template>
   <div id="app">
     <img src="./assets/logo.png">
+    <ClassSearch/>
     <ClassListing/>
   </div>
 </template>
 
 <script>
 import ClassListing from './components/ClassListing';
+import ClassSearch from './components/ClassSearch';
 
 export default {
   name: 'App',
   components: {
     ClassListing,
+    ClassSearch,
   },
 };
 </script>

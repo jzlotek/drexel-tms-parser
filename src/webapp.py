@@ -15,6 +15,11 @@ def get_course():
 
     return Response(json.dumps(database.execute()), mimetype='application/json')
 
+@app.route('/api/<query>', methods=['GET'])
+def get_listing(query):
+    
+    return Response(query, mimetype='application/json')
+
 @app.route('/', methods=["GET"])
 def get_home():
     # needs the index to be in the dist folder to work
