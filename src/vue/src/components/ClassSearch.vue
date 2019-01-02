@@ -1,10 +1,12 @@
 <template>
     <div>
-        <SearchDropdown name="test" apiEndpoint="http://localhost:8080/api/1"></SearchDropdown>
-        <SearchDropdown name="test" apiEndpoint="http://localhost:8080/api/2"></SearchDropdown>
-        <SearchDropdown name="test" apiEndpoint="http://localhost:8080/api/3"></SearchDropdown>
-        <SearchDropdown name="test" apiEndpoint="http://localhost:8080/api/4"></SearchDropdown>
-        <button @click="refreshChildren()">Refresh</button>
+      <SearchDropdown fieldName="test" apiEndpoint="/api/1"/>
+      <SearchDropdown fieldName="test" apiEndpoint="/api/2"/>
+      <SearchDropdown fieldName="test" apiEndpoint="/api/3"/>
+      <SearchDropdown fieldName="test" apiEndpoint="/api/4"/>
+      <button @click="refreshChildren()">Refresh</button>
+      <br/>
+      <button @click="executeQuery()">Execute Query</button>
     </div>
 </template>
 <script>
@@ -19,6 +21,9 @@ export default {
   methods: {
     refreshChildren() {
       EventBus.$emit('refresh-search');
+    },
+    executeQuery() {
+      EventBus.$emit('execute-query');
     },
   },
 };

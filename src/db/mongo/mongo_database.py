@@ -140,7 +140,9 @@ class MongoDatabase(Database):
 
         if len(info_dict.items()) != 0:
             course_info_list = json.loads(
-                ClassInfo.objects(__raw__=info_dict).to_json())
+                ClassInfo.objects(__raw__=info_dict).to_json()
+            )
+            logger.debug('course_info_list: {}', course_info_list)
             course_id_list = [
                 c.get('_id').get('$oid') for c in course_info_list
             ]
@@ -178,7 +180,6 @@ class MongoDatabase(Database):
 
                 if section.get('_id'):
                     del section['_id']
-
             return course_sections
 
         self.query = dict()

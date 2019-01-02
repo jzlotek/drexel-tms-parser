@@ -6,17 +6,6 @@ from bson.objectid import ObjectId
 from utils import logger
 
 
-def get_instruction_method(im):
-    if im == "Face to Face":
-        return 0
-    elif im == "Online":
-        return 1
-    elif im == "Hybrid":
-        return 2
-    else:
-        return 3
-
-
 def create_dt_obj(dt):
     try:
         return dict(

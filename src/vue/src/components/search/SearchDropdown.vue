@@ -15,7 +15,7 @@
                 </option>
             </select>
         </div>
-        <p v-else>{{ name }} has no elements</p>
+        <p v-else>{{ fieldName }} has no elements</p>
     </div>
 </template>
 
@@ -30,7 +30,7 @@ export default {
     Spinner,
   },
   props: {
-    name: {
+    fieldName: {
       type: String,
       required: true,
     },
@@ -64,8 +64,10 @@ export default {
     },
   },
   mounted() {
-    EventBus.$on('refresh-search', () => {
-      this.refresh();
+    EventBus.$on('refresh-search', (fields) => {
+      if (fields && fields.contains(this.fieldName)) {
+        this.refresh();
+      }
     });
   },
 };

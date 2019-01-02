@@ -4,7 +4,7 @@ services:
     image: drexel-tms-webserver-image
     container_name: drexel-tms-webserver
     env_file:
-     - ./src/db/.env
+     - .env
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -40,7 +40,7 @@ services:
     image: drexel-tms-ingest-image
     container_name: drexel-tms-ingest
     env_file:
-    - ./src/db/.env
+    - .env
     build:
       context: .
       dockerfile: ./Dockerfile
