@@ -15,9 +15,9 @@
         apiEndpoint="/api/colleges"
         :affectedFields="colleges"
        />
-      <button @click="refreshChildren()">Refresh</button>
+      <v-btn color="primary" @click="refreshChildren()">Refresh</v-btn>
       <br/>
-      <button @click="executeQuery()">Execute Query</button>
+      <v-btn color="primary" @click="executeQuery()">Execute Query</v-btn>
     </div>
 </template>
 <script>

@@ -1,14 +1,43 @@
 <template>
   <div>
-    <table v-if="hasClasses" class="elevation-1">
-      <ClassRow :fields="fields"/>
-      <ClassRow v-for="(cl, index) in classes" :key="index" :row="cl" :fields="fields"/>
-    </table>
-    <p v-else>No classes found</p>
+    <v-data-table
+      :headers="headers"
+      :items="items"
+      :dark="true"
+      :loading="isLoading"
+      class="elevation-1"
+    >
+      <v-progress-linear slot="progress" color="red" indeterminate/>
+      <template slot="items" slot-scope="props">
+        <tr>
+          <td class="text-xs-left">{{ props.item.course.title }}</td>
+          <td class="text-xs-right">{{ props.item.course.sc }}</td>
+          <td class="text-xs-right">{{ props.item.course.cn }}</td>
+          <td class="text-xs-right">{{ props.item.sec }}</td>
+          <td class="text-xs-right">{{ props.item.course.cr }}</td>
+          <td class="text-xs-right">{{ props.item.instructor }}</td>
+          <td class="text-xs-right">{{ props.item.course.it }}</td>
+          <td class="text-xs-right">{{ props.item.course.im }}</td>
+          <td class="text-xs-right">
+            <span v-if="props.item.enrolled < props.item.maxEnroll">
+              OPEN {{ props.item.enrolled }} / {{ props.item.maxEnroll }}
+            </span>
+            <span v-else>
+              FILLED / {{ props.item.maxEnroll }}
+            </span>
+          </td>
+          <td>
+            <v-btn :href="props.item.crnLink">{{ props.item.crn }}</v-btn>
+          </td>
+        </tr>
+      </template>
+    </v-data-table>
+    <v-btn @click="loadListing()">Reload</v-btn>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 import ClassRow from './ClassRow';
 
 export default {
@@ -18,42 +47,34 @@ export default {
   },
   data() {
     return {
-      classes: [{ sc: 'MATH', cn: '101', enrolled: 10, maxEnroll: 50 }, { sc: 'CS', cn: '164' }],
-      fields: [
-        { name: 'Title', value: 'title' },
-        { name: 'Subject Code', value: 'sc' },
-        { name: 'Course Number', value: 'cn' },
-        { name: 'Section', value: 'sec' },
-        { name: 'Credits', value: 'cr' },
-        { name: 'CRN', value: 'crn' },
-        { name: 'Instructor', value: 'in' },
-        { name: 'Instruction Type', value: 'it' },
-        { name: 'Instruction Method', value: 'im' },
-        { name: 'Enrolled', value: 'enrolled' },
+      isLoading: false,
+      items: [],
+      headers: [
+        { text: 'Title', value: 'title' },
+        { text: 'Subject Code', value: 'sc' },
+        { text: 'Course Number', value: 'cn' },
+        { text: 'Section', value: 'sec' },
+        { text: 'Credits', value: 'cr' },
+        { text: 'Instructor', value: 'instructor' },
+        { text: 'Instruction Type', value: 'it' },
+        { text: 'Instruction Method', value: 'im' },
+        { text: 'Enrolled', value: 'enrolled' },
+        { text: 'CRN', value: 'crn' },
       ],
     };
   },
-  computed: {
-    hasClasses() {
-      return this.classes.length > 0;
+  methods: {
+    loadListing() {
+      this.isLoading = true;
+      axios.get('/course?subject=CIVC')
+        .then(response => this.items = response.data)
+        .catch(error => console.log(error));
+      this.isLoading = false;
     },
   },
 };
 </script>
 
-<style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+<style>
+
 </style>
