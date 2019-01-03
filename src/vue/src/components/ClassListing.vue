@@ -38,13 +38,9 @@
 
 <script>
 import axios from 'axios';
-import ClassRow from './ClassRow';
 
 export default {
   name: 'ClassListing',
-  components: {
-    ClassRow,
-  },
   data() {
     return {
       isLoading: false,
@@ -67,8 +63,8 @@ export default {
     loadListing() {
       this.isLoading = true;
       axios.get('/course?subject=CIVC')
-        .then(response => this.items = response.data)
-        .catch(error => console.log(error));
+        .then((response) => { this.items = response.data; })
+        .catch(() => {});
       this.isLoading = false;
     },
   },
