@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table v-if="hasClasses">
+    <table v-if="hasClasses" class="elevation-1">
       <ClassRow :fields="fields"/>
       <ClassRow v-for="(cl, index) in classes" :key="index" :row="cl" :fields="fields"/>
     </table>

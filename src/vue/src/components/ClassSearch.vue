@@ -1,9 +1,20 @@
 <template>
     <div>
-      <SearchDropdown fieldName="test" apiEndpoint="/api/1"/>
-      <SearchDropdown fieldName="test" apiEndpoint="/api/2"/>
-      <SearchDropdown fieldName="test" apiEndpoint="/api/3"/>
-      <SearchDropdown fieldName="test" apiEndpoint="/api/4"/>
+      <SearchDropdown
+        fieldName="subjectCode"
+        apiEndpoint="/api/subject-codes"
+        :affectedFields="subjectCode"
+      />
+      <SearchDropdown
+        fieldName="courseNumber"
+        apiEndpoint="/api/course-number"
+        :affectedFields="courseNumber"
+      />
+      <SearchDropdown
+        fieldName="colleges"
+        apiEndpoint="/api/colleges"
+        :affectedFields="colleges"
+       />
       <button @click="refreshChildren()">Refresh</button>
       <br/>
       <button @click="executeQuery()">Execute Query</button>
@@ -17,6 +28,13 @@ export default {
   name: 'ClassSearch',
   components: {
     SearchDropdown,
+  },
+  data() {
+    return {
+      subjectCode: ['courseNumber'],
+      courseNumber: [''],
+      colleges: ['subjectCode', 'courseNumber'],
+    };
   },
   methods: {
     refreshChildren() {

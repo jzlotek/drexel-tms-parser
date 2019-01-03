@@ -1,6 +1,10 @@
 <template>
     <tr>
-        <td v-if="row && field.value !== 'enrolled'" v-for="(field, index) in fields" :key="index">
+        <td
+          v-if="row && field.value !== 'enrolled'"
+          v-for="(field, index) in fields"
+          :key="index"
+          class="text-xs-right">
             {{ row[field.value] }}
         </td>
         <td
@@ -14,13 +18,14 @@
             {{ row.maxEnroll - row.enrolled }} / {{ row.maxEnroll }} Open
         </td>
         <td
+          class="text-xs-right"
           v-else-if="
             row
             && field.value === 'enrolled'"
         >
             FILLED
         </td>
-        <td v-else>
+        <td class="text-xs-right" v-else>
             {{ field.name }}
         </td>
     </tr>

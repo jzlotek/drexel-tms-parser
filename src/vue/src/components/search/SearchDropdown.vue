@@ -5,12 +5,11 @@
       </div>
         <div class="o-select__inner" v-if="hasChildren" @refresh="refresh">
             <select
-                :name="name" id=""
-                v-for="(field, index) in fields"
-                :key="index"
+                class="o-select__dropdown"
+                v-model="value"
                 :disabled="isLoading"
             >
-                <option :value="field.value">
+                <option v-for="(field, index) in fields" :key="index" :value="field.value">
                     {{ field.name }}
                 </option>
             </select>
@@ -38,11 +37,16 @@ export default {
       type: String,
       required: true,
     },
+    affectedFields: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
       fields: [],
       isLoading: false,
+      value: undefined,
     };
   },
   computed: {
@@ -62,10 +66,25 @@ export default {
       }
       this.isLoading = false;
     },
+    dispatchUpdate() {
+      this.affectedFields.forEach((field) => {
+        EventBus.$emit('refresh-field', field);
+      });
+    },
+  },
+  watch: {
+    value() {
+      this.dispatchUpdate();
+    },
   },
   mounted() {
     EventBus.$on('refresh-search', (fields) => {
       if (fields && fields.contains(this.fieldName)) {
+        this.refresh();
+      }
+    });
+    EventBus.$on('refresh-field', (field) => {
+      if (field === this.fieldName) {
         this.refresh();
       }
     });
