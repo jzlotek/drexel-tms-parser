@@ -6,10 +6,11 @@
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
+    "watch": "webpack -w --optimize-minimize --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "lint:fix": "eslint --ext .js,.vue src --fix",
     "lint": "eslint --ext .js,.vue src",
-    "build": "node build/build.js"
+    "build": "rm -fr ../../../../dist/* && node build/build.js"
   },
   "dependencies": {
     "axios": "^0.18.0",

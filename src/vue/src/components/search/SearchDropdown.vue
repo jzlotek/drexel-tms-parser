@@ -78,11 +78,6 @@ export default {
     },
   },
   mounted() {
-    EventBus.$on('refresh-search', (fields) => {
-      if (fields && fields.contains(this.fieldName)) {
-        this.refresh();
-      }
-    });
     EventBus.$on('refresh-field', (field) => {
       if (field === this.fieldName) {
         this.refresh();

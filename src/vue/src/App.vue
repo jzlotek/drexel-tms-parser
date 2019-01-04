@@ -1,13 +1,21 @@
 <template>
-  <div id="app">
+  <v-app dark id="app">
     <ClassSearch/>
     <ClassListing/>
-  </div>
+    <v-alert
+      :value="alert"
+      type="error"
+      transition="scale-transition"
+    >
+      {{ alertData }}
+    </v-alert>
+  </v-app>
 </template>
 
 <script>
 import ClassListing from './components/ClassListing';
 import ClassSearch from './components/ClassSearch';
+import EventBus from './EventBus';
 
 export default {
   name: 'App',
@@ -15,16 +23,22 @@ export default {
     ClassListing,
     ClassSearch,
   },
+  data() {
+    return {
+      alert: false,
+      alertData: null,
+    };
+  },
+  mounted() {
+    EventBus.$on('error', (data) => {
+      this.alert = true;
+      this.alertData = data;
+      setTimeout(() => { this.alert = false; }, 5000);
+    });
+  },
 };
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>

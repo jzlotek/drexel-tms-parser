@@ -1,4 +1,4 @@
-from flask import Flask, Response, request, render_template
+from flask import Flask, Response, request, render_template, send_from_directory
 import os
 from db import database
 import json
@@ -28,6 +28,10 @@ def get_home():
     # needs the index to be in the dist folder to work
     return render_template('index.html')
 
+@app.route('/<path:path>', methods=['GET'])
+def get_static(path):
+
+    return send_from_directory('../dist', path)
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT')) if os.environ.get('PORT') else 5000
