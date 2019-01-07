@@ -2,14 +2,19 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
 import Vuetify from 'vuetify';
+import Vuex from 'vuex';
 import 'vuetify/dist/vuetify.min.css';
 import App from './App';
+import store from './store';
 
 Vue.config.productionTip = false;
 Vue.use(Vuetify);
+Vue.use(Vuex);
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   components: { App },
   template: '<App/>',
 });

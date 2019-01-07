@@ -5,6 +5,7 @@
         apiEndpoint="/api/subject-codes"
         :affectedFields="subjectCode"
         queryParam="sc"
+        :clearQuery="true"
       />
       <SearchDropdown
         fieldName="courseNumber"

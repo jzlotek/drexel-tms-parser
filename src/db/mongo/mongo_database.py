@@ -137,7 +137,16 @@ class MongoDatabase(Database):
             else:
                 logger.error('Unknown key/value pair: ', key, value)
         meeting_dict = meeting_dict.get('meeting')
-
+        
+        if not section_dict.get('year'):
+            # fall back to current year
+            import datetime
+            now = datetime.datetime.now()
+            year = now.year % 2000
+            if now.month < 9:
+                year -= 1
+            section_dict.update({'year': year})
+        
         if len(info_dict.items()) != 0:
             course_info_list = json.loads(
                 ClassInfo.objects(__raw__=info_dict).to_json()
@@ -181,8 +190,6 @@ class MongoDatabase(Database):
                 if section.get('_id'):
                     del section['_id']
             return course_sections
-
-        self.query = dict()
 
     def get_query(self):
         return self.query

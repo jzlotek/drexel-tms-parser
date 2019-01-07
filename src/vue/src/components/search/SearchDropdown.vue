@@ -6,7 +6,7 @@
         <v-flex xs12 sm6 d-flex v-if="hasChildren" @refresh="refresh">
             <v-select
               :disabled="isLoading"
-              :items="fields.data"
+              :items="fields"
               :label="fieldName"
               v-model="value">
               </v-select>
@@ -40,20 +40,23 @@ export default {
     },
     queryParam: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
+    clearQuery: {
+      type: Boolean,
+      required: false,
+    },
   },
   data() {
     return {
       fields: [],
       isLoading: false,
       value: undefined,
-      query: {},
     };
   },
   computed: {
     hasChildren() {
-      return this.fields.data && this.fields.data.length > 0;
+      return this.fields && this.fields.length > 0;
     },
   },
   methods: {
@@ -62,32 +65,35 @@ export default {
       this.isLoading = true;
       try {
         let queryParams = '';
-        const L = Object.entries(this.query).length;
+        const L = Object.entries(this.$store.state.query).length;
         let i = 0;
-        if (L > 0){
+        if (L > 0) {
           queryParams = '?';
-          Object.entries(this.query).forEach(entry => {
-            let param = `${entry[0]}=${entry[1]}`;
+          Object.entries(this.$store.state.query).forEach((entry) => {
+            const param = `${entry[0]}=${entry[1]}`;
             if (i > 0) {
               queryParams += '&';
             }
             queryParams += param;
-            i++;
-          })
+            i += 1;
+          });
         }
-        console.log(queryParams)
         fields = await axios.get(this.apiEndpoint + queryParams);
-        this.fields = fields;
+        this.fields = fields.data;
       } catch (error) {
         this.fields = [];
       }
       this.isLoading = false;
     },
-    dispatchUpdate() {
+    async dispatchUpdate() {
+      if (this.clearQuery) {
+        this.$store.commit('clearQuery');
+      }
+      const obj = {};
+      obj[`${this.queryParam}`] = this.value;
+      this.$store.commit('addToQuery', obj);
       this.affectedFields.forEach((field) => {
-        let obj = {};
-        obj[`${this.queryParam}`] = this.value;
-        EventBus.$emit('refresh-field', {field: field, q: obj});
+        EventBus.$emit('refresh-field', { fieldName: field });
       });
     },
   },
@@ -98,8 +104,7 @@ export default {
   },
   mounted() {
     EventBus.$on('refresh-field', (event) => {
-      if (event.field === this.fieldName) {
-        this.query = Object.assign(this.query, event.q);
+      if (event.fieldName === this.fieldName) {
         this.refresh();
       }
     });

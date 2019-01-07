@@ -78,6 +78,7 @@ export default {
       loadedOnce: false,
       items: [],
       selected: [],
+      apiEndpoint: '/course',
       headers: [
         { text: 'Title', value: 'title', align: 'left' },
         { text: 'Subject Code', value: 'sc', align: 'center' },
@@ -96,17 +97,29 @@ export default {
   },
   methods: {
     async loadListing() {
+      let items;
       this.isLoading = true;
       try {
-        const response = await axios.get('/course?subject=CIVC');
-        this.items = response.data;
-      } catch (e) {
-        EventBus.$emit('error', e);
+        let queryParams = '';
+        const L = Object.entries(this.$store.state.query).length;
+        let i = 0;
+        if (L > 0) {
+          queryParams = '?';
+          Object.entries(this.$store.state.query).forEach((entry) => {
+            const param = `${entry[0]}=${entry[1]}`;
+            if (i > 0) {
+              queryParams += '&';
+            }
+            queryParams += param;
+            i += 1;
+          });
+        }
+        items = await axios.get(this.apiEndpoint + queryParams);
+        this.items = items.data;
+      } catch (error) {
+        this.items = [];
       }
       this.isLoading = false;
-      if (!this.loadedOnce) {
-        this.loadedOnce = true;
-      }
     },
     addToSelected(index) {
       const item = this.items[index];
@@ -119,6 +132,11 @@ export default {
     removeFromSelected(index) {
       this.selected.splice(index, 1);
     },
+  },
+  mounted() {
+    EventBus.$on('refresh-field', () => {
+      this.loadListing();
+    });
   },
 };
 </script>

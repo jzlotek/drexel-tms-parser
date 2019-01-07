@@ -12,8 +12,10 @@ app = Flask(__name__,
 @app.route('/course', methods=['GET'])
 def get_course():
     database.query_builder(request.args)
+    logger.info(request.args)
     logger.info(database.get_query())
     data = json.dumps(database.execute())
+    database.clear_query()
     return Response(data, mimetype='application/json')
 
 
