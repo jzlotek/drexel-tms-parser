@@ -4,12 +4,12 @@
         <Spinner/>
       </div>
         <v-flex xs12 sm6 d-flex v-if="hasChildren" @refresh="refresh">
-            <v-select
+            <v-autocomplete
               :disabled="isLoading"
               :items="fields"
               :label="fieldName"
               v-model="value">
-              </v-select>
+              </v-autocomplete>
         </v-flex>
         <p v-else>{{ fieldName }} has no elements</p>
     </div>
