@@ -186,6 +186,22 @@ class MongoDatabase(Database):
 
     def get_query(self):
         return self.query
+    
+    def get_list(self, l, query=None):
+        # subject-codes
+        # course-number
+        # colleges
+        # years
+        if l == "subject-codes":
+            return sorted(list(set([c.sc for c in ClassInfo.objects()])))
+        elif l == "course-number":
+            self.subject_code(query.get('sc'))
+            self.year(query.get('year') if query.get('year') else 18)
+            classes = self.execute()
+            return sorted(list(set([c.get('course').get('cn') for c in classes])))
+        elif l == "years":
+            return sorted(list(set([c.year for c in Section.objects()])))
+        return []
 
     @staticmethod
     def create_course_section(

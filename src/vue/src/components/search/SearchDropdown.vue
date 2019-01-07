@@ -3,17 +3,14 @@
       <div class="spinner__wrapper" v-if="isLoading">
         <Spinner/>
       </div>
-        <div class="o-select__inner" v-if="hasChildren" @refresh="refresh">
-            <select
-                class="o-select__dropdown"
-                v-model="value"
-                :disabled="isLoading"
-            >
-                <option v-for="(field, index) in fields" :key="index" :value="field.value">
-                    {{ field.name }}
-                </option>
-            </select>
-        </div>
+        <v-flex xs12 sm6 d-flex v-if="hasChildren" @refresh="refresh">
+            <v-select
+              :disabled="isLoading"
+              :items="fields.data"
+              :label="fieldName"
+              v-model="value">
+              </v-select>
+        </v-flex>
         <p v-else>{{ fieldName }} has no elements</p>
     </div>
 </template>
@@ -41,17 +38,22 @@ export default {
       type: Array,
       required: true,
     },
+    queryParam: {
+      type: String,
+      required: true
+    }
   },
   data() {
     return {
       fields: [],
       isLoading: false,
       value: undefined,
+      query: {},
     };
   },
   computed: {
     hasChildren() {
-      return this.fields && this.fields.length > 0;
+      return this.fields.data && this.fields.data.length > 0;
     },
   },
   methods: {
@@ -59,7 +61,22 @@ export default {
       let fields;
       this.isLoading = true;
       try {
-        fields = await axios.get(this.apiEndpoint);
+        let queryParams = '';
+        const L = Object.entries(this.query).length;
+        let i = 0;
+        if (L > 0){
+          queryParams = '?';
+          Object.entries(this.query).forEach(entry => {
+            let param = `${entry[0]}=${entry[1]}`;
+            if (i > 0) {
+              queryParams += '&';
+            }
+            queryParams += param;
+            i++;
+          })
+        }
+        console.log(queryParams)
+        fields = await axios.get(this.apiEndpoint + queryParams);
         this.fields = fields;
       } catch (error) {
         this.fields = [];
@@ -68,7 +85,9 @@ export default {
     },
     dispatchUpdate() {
       this.affectedFields.forEach((field) => {
-        EventBus.$emit('refresh-field', field);
+        let obj = {};
+        obj[`${this.queryParam}`] = this.value;
+        EventBus.$emit('refresh-field', {field: field, q: obj});
       });
     },
   },
@@ -78,11 +97,13 @@ export default {
     },
   },
   mounted() {
-    EventBus.$on('refresh-field', (field) => {
-      if (field === this.fieldName) {
+    EventBus.$on('refresh-field', (event) => {
+      if (event.field === this.fieldName) {
+        this.query = Object.assign(this.query, event.q);
         this.refresh();
       }
     });
+    this.refresh();
   },
 };
 </script>

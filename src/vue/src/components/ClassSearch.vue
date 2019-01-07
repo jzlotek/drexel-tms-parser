@@ -4,17 +4,19 @@
         fieldName="subjectCode"
         apiEndpoint="/api/subject-codes"
         :affectedFields="subjectCode"
+        queryParam="sc"
       />
       <SearchDropdown
         fieldName="courseNumber"
         apiEndpoint="/api/course-number"
         :affectedFields="courseNumber"
+        queryParam="cn"
       />
-      <SearchDropdown
+      <!-- <SearchDropdown
         fieldName="colleges"
         apiEndpoint="/api/colleges"
         :affectedFields="colleges"
-       />
+       /> -->
       <v-btn color="primary" @click="refreshChildren()">Refresh</v-btn>
       <br/>
       <v-btn color="primary" @click="executeQuery()">Execute Query</v-btn>

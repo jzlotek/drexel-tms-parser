@@ -65,6 +65,10 @@ class Database(abc.ABC):
     def execute(self):
         pass
 
+    @abc.abstractmethod
+    def get_list(self, l, query):
+        pass
+
     def query_builder(self, query):
         if query.get('subject'):
             self.subject_code(query.get('subject'))

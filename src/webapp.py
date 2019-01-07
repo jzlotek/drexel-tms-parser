@@ -20,7 +20,7 @@ def get_course():
 @app.route('/api/<query>', methods=['GET'])
 def get_listing(query):
 
-    return Response(query, mimetype='application/json')
+    return Response(json.dumps(database.get_list(query, request.args)), mimetype='application/json')
 
 
 @app.route('/', methods=["GET"])

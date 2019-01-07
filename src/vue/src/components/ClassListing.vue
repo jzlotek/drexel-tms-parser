@@ -28,7 +28,7 @@
           </td>
           <td class="text-xs-center">{{ props.item.enrolled }} / {{ props.item.maxEnroll }}</td>
           <td class="text-xs-center">
-            <v-btn :href="props.item.crnLink">{{ props.item.crn }}</v-btn>
+            <v-btn :href="props.item.crnLink" target="_blank">{{ props.item.crn }}</v-btn>
           </td>
           <td>
             <v-btn fab small @click="addToSelected(props.index)">
@@ -48,7 +48,8 @@
           <v-btn fab small @click="removeFromSelected(index)">
             <v-icon>remove_circle</v-icon>
           </v-btn>
-          {{ item.course.title }}
+          {{ item.course.title }}&nbsp;
+          <v-btn :href="item.crnLink" target="_blank">{{ item.crn }}</v-btn>
         </div>
         <v-card>
           <p class="text-xs-left">{{ item.course.title }}</p><br/>
@@ -108,7 +109,12 @@ export default {
       }
     },
     addToSelected(index) {
-      this.selected.push(this.items[index]);
+      const item = this.items[index];
+      if (this.selected.indexOf(item) === -1) {
+        this.selected.push(item);
+      } else {
+        EventBus.$emit('error', `${item.crn} is already in your selected`);
+      }
     },
     removeFromSelected(index) {
       this.selected.splice(index, 1);
