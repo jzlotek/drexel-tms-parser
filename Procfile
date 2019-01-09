@@ -1,1 +1,1 @@
-web: python src/webapp.py
+web: DEBUG=true python src/webapp.py
