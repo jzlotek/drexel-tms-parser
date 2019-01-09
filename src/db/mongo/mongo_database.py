@@ -200,6 +200,7 @@ class MongoDatabase(Database):
         # colleges
         # years
         if l == "subject-codes":
+            logger.info(ClassInfo.objects())
             codes = sorted(list(set([c.sc for c in ClassInfo.objects()])))
             logger.info(codes)
             return codes
