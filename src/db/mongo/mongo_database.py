@@ -200,7 +200,9 @@ class MongoDatabase(Database):
         # colleges
         # years
         if l == "subject-codes":
-            return sorted(list(set([c.sc for c in ClassInfo.objects()])))
+            codes = sorted(list(set([c.sc for c in ClassInfo.objects()])))
+            logger.info(codes)
+            return codes
         elif l == "course-number":
             self.subject_code(query.get('sc'))
             self.year(query.get('year') if query.get('year') else 18)
