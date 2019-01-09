@@ -3,10 +3,13 @@ import os
 from db import database
 import json
 from utils import logger
+from whitenoise import WhiteNoise
 
 app = Flask(__name__,
             static_folder="../dist/static",
             template_folder="../dist")
+app.wsgi_app = WhiteNoise(app.wsgi_app, root='dist/')
+
 
 
 @app.route('/course', methods=['GET'])
@@ -49,6 +52,6 @@ if __name__ == '__main__':
     if os.environ.get('DEBUG'):
         debug = bool(os.environ.get('DEBUG'))
     try:
-        app.run(port=PORT, debug=debug, threaded=(not debug))
+        app.run(host='0.0.0.0', port=PORT, debug=debug, threaded=(not debug))
     except Exception as e:
         logger.error(e)
