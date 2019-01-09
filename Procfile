@@ -1,2 +1,2 @@
-frontend: cd src/vue && yarn && npm run build
+frontend: cd src/vue && npm install && npm run build
 webserver: PORT=80 python src/webapp.py
