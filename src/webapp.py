@@ -38,9 +38,16 @@ def get_static(path):
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT')) if os.environ.get('PORT') else 5000
 
+    if 'dist' not in os.listdir('../'):
+        logger.debug("Making dist folders")
+        os.mkdir('../dist')
+
+    if '.tmp' not in os.listdir('../dist'):
+        os.mkdir('../dist/.tmp')
+
     debug = False
     if os.environ.get('DEBUG'):
-        debug = (os.environ.get('DEBUG').lower() == 'true')
+        debug = bool(os.environ.get('DEBUG'))
     try:
         app.run(port=PORT, debug=debug, threaded=(not debug))
     except Exception as e:
