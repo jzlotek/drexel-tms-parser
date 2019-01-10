@@ -19,6 +19,7 @@
 import axios from 'axios';
 import EventBus from '../../EventBus';
 import Spinner from '../Spinner';
+import { CLEAR_QUERY, ADD_TO_QUERY } from '../../store';
 
 export default {
   name: 'SearchDropdown',
@@ -27,6 +28,10 @@ export default {
   },
   props: {
     fieldName: {
+      type: String,
+      required: true,
+    },
+    fieldSlug: {
       type: String,
       required: true,
     },
@@ -45,6 +50,7 @@ export default {
     clearQuery: {
       type: Boolean,
       required: false,
+      default: false,
     },
   },
   data() {
@@ -58,27 +64,16 @@ export default {
     hasChildren() {
       return this.fields && this.fields.length > 0;
     },
+    queryParams() {
+      return this.$store.getters.getQueryString;
+    }
   },
   methods: {
     async refresh() {
       let fields;
       this.isLoading = true;
       try {
-        let queryParams = '';
-        const L = Object.entries(this.$store.state.query).length;
-        let i = 0;
-        if (L > 0) {
-          queryParams = '?';
-          Object.entries(this.$store.state.query).forEach((entry) => {
-            const param = `${entry[0]}=${entry[1]}`;
-            if (i > 0) {
-              queryParams += '&';
-            }
-            queryParams += param;
-            i += 1;
-          });
-        }
-        fields = await axios.get(this.apiEndpoint + queryParams);
+        fields = await axios.get(`${this.apiEndpoint}${this.queryParams}`);
         this.fields = fields.data;
       } catch (error) {
         this.fields = [];
@@ -87,13 +82,15 @@ export default {
     },
     async dispatchUpdate() {
       if (this.clearQuery) {
-        this.$store.commit('clearQuery');
+        this.$store.dispatch(CLEAR_QUERY);
       }
+
       const obj = {};
       obj[`${this.queryParam}`] = this.value;
-      this.$store.commit('addToQuery', obj);
+      this.$store.commit(ADD_TO_QUERY, obj);
+
       this.affectedFields.forEach((field) => {
-        EventBus.$emit('refresh-field', { fieldName: field });
+        EventBus.$emit('refresh-field', { fieldSlug: field });
       });
     },
   },
@@ -104,7 +101,7 @@ export default {
   },
   mounted() {
     EventBus.$on('refresh-field', (event) => {
-      if (event.fieldName === this.fieldName) {
+      if (event.fieldSlug === this.fieldSlug) {
         this.refresh();
       }
     });

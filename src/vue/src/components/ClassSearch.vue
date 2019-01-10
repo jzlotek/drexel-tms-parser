@@ -1,14 +1,16 @@
 <template>
     <div>
       <SearchDropdown
-        fieldName="subjectCode"
+        fieldSlug="subjectCode"
+        fieldName="Subject Code"
         apiEndpoint="/api/subject-codes"
         :affectedFields="subjectCode"
         queryParam="sc"
         :clearQuery="true"
       />
       <SearchDropdown
-        fieldName="courseNumber"
+        fieldSlug="courseNumber"
+        fieldName="Course Number"
         apiEndpoint="/api/course-number"
         :affectedFields="courseNumber"
         queryParam="cn"

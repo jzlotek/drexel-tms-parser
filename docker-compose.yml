@@ -1,7 +1,7 @@
 version: "3.4"
 services:
   drexel-tms-webserver:
-    image: drexel-tms-parser-image
+    image: drexel-tms-webserver-image
     container_name: drexel-tms-webserver
     env_file:
      - .env
@@ -11,7 +11,7 @@ services:
       args:
         PORT: 5000
         SERVLET: webapp.py
-        NODE_CMD: "yarn && cd src/vue && npm run build"
+        NODE_CMD: "npm run build"
     ports:
       - "5000:5000"
     volumes:
@@ -20,7 +20,7 @@ services:
       - drexel-tms-network
 
   drexel-tms-crawler:
-    image: drexel-tms-parser-image
+    image: drexel-tms-crawler-image
     container_name: drexel-tms-crawler
     build:
       context: .
@@ -38,7 +38,7 @@ services:
       - drexel-tms-ingest
 
   drexel-tms-ingest:
-    image: drexel-tms-parser-image
+    image: drexel-tms-ingest-image
     container_name: drexel-tms-ingest
     env_file:
     - .env

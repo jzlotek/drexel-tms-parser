@@ -67,18 +67,21 @@
 </template>
 
 <script>
-import axios from 'axios';
 import EventBus from '../EventBus';
+import { UPDATE_CLASSES } from '../store';
 
 export default {
   name: 'ClassListing',
+  computed: {
+    items() {
+      return this.$store.getters.getClasses;
+    },
+  },
   data() {
     return {
       isLoading: false,
       loadedOnce: false,
-      items: [],
       selected: [],
-      apiEndpoint: '/course',
       headers: [
         { text: 'Title', value: 'title', align: 'left' },
         { text: 'Subject Code', value: 'sc', align: 'center' },
@@ -97,28 +100,8 @@ export default {
   },
   methods: {
     async loadListing() {
-      let items;
       this.isLoading = true;
-      try {
-        let queryParams = '';
-        const L = Object.entries(this.$store.state.query).length;
-        let i = 0;
-        if (L > 0) {
-          queryParams = '?';
-          Object.entries(this.$store.state.query).forEach((entry) => {
-            const param = `${entry[0]}=${entry[1]}`;
-            if (i > 0) {
-              queryParams += '&';
-            }
-            queryParams += param;
-            i += 1;
-          });
-        }
-        items = await axios.get(this.apiEndpoint + queryParams);
-        this.items = items.data;
-      } catch (error) {
-        this.items = [];
-      }
+      await this.$store.dispatch(UPDATE_CLASSES);
       this.isLoading = false;
     },
     addToSelected(index) {

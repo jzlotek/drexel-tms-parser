@@ -3,13 +3,15 @@ import os
 from db import database
 import json
 from utils import logger
-from whitenoise import WhiteNoise
 
 app = Flask(__name__,
             static_folder="../dist/static",
             template_folder="../dist")
-app.wsgi_app = WhiteNoise(app.wsgi_app, root='dist/')
 
+
+def json_response(data):
+    json_string = json.dumps(data)
+    return Response(json_string, mimetype='application/json')
 
 
 @app.route('/course', methods=['GET'])
@@ -17,15 +19,15 @@ def get_course():
     database.query_builder(request.args)
     logger.info(request.args)
     logger.info(database.get_query())
-    data = json.dumps(database.execute())
+    data = database.execute()
     database.clear_query()
-    return Response(data, mimetype='application/json')
+    return json_response(data)
 
 
 @app.route('/api/<query>', methods=['GET'])
 def get_listing(query):
-
-    return Response(json.dumps(database.get_list(query, request.args)), mimetype='application/json')
+    data = database.get_list(query, request.args)
+    return json_response(data)
 
 
 @app.route('/', methods=["GET"])
@@ -37,6 +39,7 @@ def get_home():
 def get_static(path):
 
     return send_from_directory('../dist', path)
+
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT')) if os.environ.get('PORT') else 5000
