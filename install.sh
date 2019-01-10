@@ -8,9 +8,7 @@ pip install -r ./requirements.txt
 
 home="$PWD"
 
-cd ./src/vue
-
-yarn
+npm install
 
 cd "$home"
 clear

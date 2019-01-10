@@ -13,8 +13,7 @@
     "start": "npm run dev",
     "lint:fix": "eslint --ext .js,.vue src --fix",
     "lint": "eslint --ext .js,.vue src",
-    "build": "cd src/vue && node build/build.js && cd ../..",
-    "postinstall": "npm run build"
+    "build": "cd src/vue && node build/build.js && cd ../.."
   },
   "dependencies": {
     "axios": "^0.18.0",
