@@ -1,22 +1,28 @@
-FROM python:3.7.1-stretch
+FROM python:3.7.2-stretch
+
+# BEGIN NPM installation
+RUN git clone https://github.com/jzlotek/drexel-tms-parser.git /home/drexel-tms-parser
+WORKDIR /home/drexel-tms-parser
+
+RUN git checkout heroku
+
+ARG NODE_CMD=''
+ENV NODE_CMD=$NODE_CMD
+RUN /bin/bash -c "if [[ '${NODE_CMD}' != '' ]]; then curl -sL https://deb.nodesource.com/setup_10.x | bash - && apt-get install -y nodejs && npm install; fi"
+
+# setting up servlet config
 
 ARG PORT
-
 ARG SERVLET=4000
 ENV SERVLET=$SERVLET
-
-RUN git clone https://github.com/jzlotek/drexel-tms-parser.git /home/drexel-tms-parser
-
-WORKDIR /home/drexel-tms-parser
 
 RUN pip3 install virtualenv
 
 RUN virtualenv ./venv -p python3
 
 RUN /bin/bash -c "source ./venv/bin/activate"
-
-RUN pip install -r ./requirements.txt
+RUN pip3 install -r ./requirements.txt
 
 EXPOSE $PORT
 
-CMD ["/bin/bash", "-c", "python src/${SERVLET}"]
+CMD ["/bin/bash", "-c", "if [[ '${NODE_CMD}' != '' ]]; then /bin/bash -c '${NODE_CMD}'; fi; python src/${SERVLET}"]

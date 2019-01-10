@@ -151,7 +151,6 @@ class MongoDatabase(Database):
             course_info_list = json.loads(
                 ClassInfo.objects(__raw__=info_dict).to_json()
             )
-            logger.debug('course_info_list: {}', course_info_list)
             course_id_list = [
                 c.get('_id').get('$oid') for c in course_info_list
             ]
@@ -200,7 +199,8 @@ class MongoDatabase(Database):
         # colleges
         # years
         if l == "subject-codes":
-            return sorted(list(set([c.sc for c in ClassInfo.objects()])))
+            codes = sorted(list(set([c.sc for c in ClassInfo.objects()])))
+            return codes
         elif l == "course-number":
             self.subject_code(query.get('sc'))
             self.year(query.get('year') if query.get('year') else 18)
