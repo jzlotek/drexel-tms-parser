@@ -10,7 +10,8 @@
 </template>
 
 <script>
-import WeekViewDay from './WeekViewDay';
+/* webpackChunkName: "week-view-day */
+const WeekViewDay = () => import('./WeekViewDay');
 
 export default {
   name: 'WeekView',

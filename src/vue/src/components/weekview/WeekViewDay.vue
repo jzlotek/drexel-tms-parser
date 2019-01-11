@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import WeekViewClass from './WeekViewClass';
+const WeekViewClass = () => import('./WeekViewClass');
 
 export default {
   name: 'WeekViewDay',

@@ -20,10 +20,17 @@ import EventBus from '../../EventBus';
 import Spinner from '../Spinner';
 import { CLEAR_QUERY, ADD_TO_QUERY } from '../../store/constants';
 
+/* webpackChunkName: "v-auto-complete" */
+const VAutocomplete = () => import('vuetify/es5/components/VAutocomplete/VAutocomplete');
+/* webpackChunkName: "v-progress-linear" */
+const VProgressLinear = () => import('vuetify/es5/components/VProgressLinear/VProgressLinear');
+
 export default {
   name: 'SearchDropdown',
   components: {
     Spinner,
+    VAutocomplete,
+    VProgressLinear,
   },
   props: {
     fieldName: {

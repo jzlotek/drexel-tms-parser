@@ -17,14 +17,19 @@
 </template>
 
 <script>
-import ClassListing from './components/ClassListing';
-import ClassSearch from './components/ClassSearch';
-import WeekView from './components/weekview/WeekView';
+import VApp from 'vuetify/es5/components/VApp/VApp';
 import EventBus from './EventBus';
+/* webpackChunkName: "class-listing" */
+const ClassListing = () => import('./components/ClassListing');
+/* webpackChunkName: "class-search" */
+const ClassSearch = () => import('./components/ClassSearch');
+/* webpackChunkName: "week-view" */
+const WeekView = () => import('./components/weekview/WeekView');
 
 export default {
   name: 'App',
   components: {
+    VApp,
     ClassListing,
     ClassSearch,
     WeekView,

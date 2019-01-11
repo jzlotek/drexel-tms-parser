@@ -47,12 +47,37 @@
 <script>
 import EventBus from '../EventBus';
 import { UPDATE_CLASSES, REMOVE_FROM_SELCTED } from '../store/constants';
-import ClassListingRow from './ClassListingRow';
+/* webpackChunkName: "class-listing-row" */
+const ClassListingRow = () => import('./ClassListingRow');
+/* webpackChunkName: "v-data-table" */
+const VDataTable = () => import('vuetify/es5/components/VDataTable/VDataTable');
+/* webpackChunkName: "v-progress-linear" */
+const VProgressLinear = () => import('vuetify/es5/components/VProgressLinear/VProgressLinear');
+/* webpackChunkName: "v-alert" */
+const VAlert = () => import('vuetify/es5/components/VAlert/VAlert');
+/* webpackChunkName: "v-icon" */
+const VIcon = () => import('vuetify/es5/components/VIcon/VIcon');
+/* webpackChunkName: "v-btn" */
+const VBtn = () => import('vuetify/es5/components/VBtn/VBtn');
+/* webpackChunkName: "v-expansion-panel" */
+const VExpansionPanel = () => import('vuetify/es5/components/VExpansionPanel/VExpansionPanel');
+/* webpackChunkName: "v-expansion-panel-content" */
+const VExpansionPanelContent = () => import('vuetify/es5/components/VExpansionPanel/VExpansionPanelContent');
+/* webpackChunkName: "v-expansion-panel-card" */
+const VCard = () => import('vuetify/es5/components/VCard/VCard');
 
 export default {
   name: 'ClassListing',
   components: {
     ClassListingRow,
+    VDataTable,
+    VProgressLinear,
+    VAlert,
+    VBtn,
+    VExpansionPanelContent,
+    VExpansionPanel,
+    VCard,
+    VIcon,
   },
   computed: {
     items() {

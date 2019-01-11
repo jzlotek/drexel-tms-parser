@@ -23,7 +23,7 @@
     </div>
 </template>
 <script>
-import SearchDropdown from './search/SearchDropdown';
+const SearchDropdown = () => import('./search/SearchDropdown');
 
 export default {
   name: 'ClassSearch',
