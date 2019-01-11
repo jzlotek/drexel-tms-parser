@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import axios from 'axios';
 import {
   UPDATE_CLASSES,
   CLEAR_QUERY,
@@ -17,14 +16,7 @@ const mutations = {
   [CLEAR_QUERY](state) {
     state.query = {};
   },
-  async [UPDATE_CLASSES](state, queryString) {
-    let items;
-    try {
-      items = await axios.get(`/course${queryString}`);
-      items = items.data;
-    } catch (error) {
-      items = [];
-    }
+  [UPDATE_CLASSES](state, items) {
     state.classes = items;
   },
   [ADD_TO_SELCTED](state, c) {
