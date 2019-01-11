@@ -1,20 +1,25 @@
 <template>
   <v-app dark id="app">
-    <ClassSearch/>
-    <ClassListing/>
     <v-alert
       :value="alert"
       type="error"
       transition="scale-transition"
+      style="position: absolute"
     >
       {{ alertData }}
     </v-alert>
+
+    <ClassSearch/>
+    <ClassListing/>
+
+    <WeekView :classesInput="[]"></WeekView>
   </v-app>
 </template>
 
 <script>
 import ClassListing from './components/ClassListing';
 import ClassSearch from './components/ClassSearch';
+import WeekView from './components/weekview/WeekView';
 import EventBus from './EventBus';
 
 export default {
@@ -22,11 +27,13 @@ export default {
   components: {
     ClassListing,
     ClassSearch,
+    WeekView,
   },
   data() {
     return {
       alert: false,
       alertData: null,
+      obj: { course: { college: 'Antoinette Westphal COMAD', isQuarter: true, cn: '785', sc: 'AADM', it: 'Lecture', title: 'Research Design in the Arts', im: 'Online', cr: 3 }, year: 18, semester: 'FA', crn: 13253, crnLink: 'https://termmasterschedule.drexel.edu/webtms_du/app?component=courseDetails2&page=CourseList&service=direct&sp=ZH4sIAAAAAAAAAFvzloG1uIhBPjWlVC%2BlKLUiNUcvs6hErzw1qSS3WC8lsSRRLyS1KJcBAhiZGJh9GNgTk0tCMnNTSxhEfLISyxL1iwtz9EECxSWJuQXWPgwcJUAtzvkpQBVCEBU5iXnp%2BsElRZl56TB5l9Ti5EKGOgamioKCEgY2IwNDC0NToAa3xJwchcDSxCKgIgVDC11DSwAnUj6JpAAAAA%3D%3D&sp=SA&sp=SAADM&sp=S13253&sp=S785&sp=0', sec: '900', meeting: { days: 'MWF', times: ['12:00:00', '12:50:00'] }, instructor: 'Lindsey S Crane', maxEnroll: 0, enrolled: 0 },
     };
   },
   mounted() {
@@ -38,7 +45,3 @@ export default {
   },
 };
 </script>
-
-<style>
-
-</style>

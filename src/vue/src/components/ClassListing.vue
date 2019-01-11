@@ -13,29 +13,7 @@
         </v-alert>
       </template>
       <template slot="items" slot-scope="props">
-        <tr>
-          <td class="text-xs-left">{{ props.item.course.title }}</td>
-          <td class="text-xs-center">{{ props.item.course.sc }}</td>
-          <td class="text-xs-center">{{ props.item.course.cn }}</td>
-          <td class="text-xs-center">{{ props.item.sec }}</td>
-          <td class="text-xs-center">{{ props.item.course.cr }}</td>
-          <td class="text-xs-center">{{ props.item.instructor }}</td>
-          <td class="text-xs-center">{{ props.item.course.it }}</td>
-          <td class="text-xs-center">{{ props.item.course.im }}</td>
-          <td class="text-xs-center">
-            <span v-if="props.item.enrolled < props.item.maxEnroll">OPEN</span>
-            <span v-else>FILLED</span>
-          </td>
-          <td class="text-xs-center">{{ props.item.enrolled }} / {{ props.item.maxEnroll }}</td>
-          <td class="text-xs-center">
-            <v-btn :href="props.item.crnLink" target="_blank">{{ props.item.crn }}</v-btn>
-          </td>
-          <td>
-            <v-btn fab small @click="addToSelected(props.index)">
-              <v-icon>add_circle</v-icon>
-            </v-btn>
-          </td>
-        </tr>
+        <ClassListingRow :props="props"/>
       </template>
     </v-data-table>
     <v-btn @click="loadListing()">Reload</v-btn>
@@ -68,20 +46,26 @@
 
 <script>
 import EventBus from '../EventBus';
-import { UPDATE_CLASSES } from '../store';
+import { UPDATE_CLASSES, REMOVE_FROM_SELCTED } from '../store/constants';
+import ClassListingRow from './ClassListingRow';
 
 export default {
   name: 'ClassListing',
+  components: {
+    ClassListingRow,
+  },
   computed: {
     items() {
       return this.$store.getters.getClasses;
+    },
+    selected() {
+      return this.$store.getters.getSelected;
     },
   },
   data() {
     return {
       isLoading: false,
       loadedOnce: false,
-      selected: [],
       headers: [
         { text: 'Title', value: 'title', align: 'left' },
         { text: 'Subject Code', value: 'sc', align: 'center' },
@@ -94,6 +78,7 @@ export default {
         { text: 'Status', value: 'status', align: 'center' },
         { text: 'Enrolled', value: 'enrolled', align: 'center' },
         { text: 'CRN', value: 'crn', align: 'center' },
+        { text: 'Time and Day', value: 'time_day', align: 'center' },
         { text: 'Add', value: '', align: 'center' },
       ],
     };
@@ -104,16 +89,8 @@ export default {
       await this.$store.dispatch(UPDATE_CLASSES);
       this.isLoading = false;
     },
-    addToSelected(index) {
-      const item = this.items[index];
-      if (this.selected.indexOf(item) === -1) {
-        this.selected.push(item);
-      } else {
-        EventBus.$emit('error', `${item.crn} is already in your selected`);
-      }
-    },
     removeFromSelected(index) {
-      this.selected.splice(index, 1);
+      this.$store.dispatch(REMOVE_FROM_SELCTED, this.selected[index].crn);
     },
   },
   mounted() {

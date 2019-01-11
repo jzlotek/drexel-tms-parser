@@ -1,17 +1,16 @@
 <template>
     <div class="o-select__wrapper">
-      <div class="spinner__wrapper" v-if="isLoading">
-        <Spinner/>
-      </div>
-        <v-flex xs12 sm6 d-flex v-if="hasChildren" @refresh="refresh">
-            <v-autocomplete
-              :disabled="isLoading"
-              :items="fields"
-              :label="fieldName"
-              v-model="value">
-              </v-autocomplete>
+      <v-flex xs12 sm6 d-flex @refresh="refresh">
+        <v-autocomplete
+          :disabled="isLoading"
+          :items="fields"
+          :label="fieldName"
+          v-model="value"
+          :loading="isLoading">
+            <v-progress-linear slot="progress" color="red" indeterminate/>
+            <div slot="no-data">{{ fieldName }} has no elements for the selected parameters</div>
+          </v-autocomplete>
         </v-flex>
-        <p v-else>{{ fieldName }} has no elements</p>
     </div>
 </template>
 
@@ -19,7 +18,7 @@
 import axios from 'axios';
 import EventBus from '../../EventBus';
 import Spinner from '../Spinner';
-import { CLEAR_QUERY, ADD_TO_QUERY } from '../../store';
+import { CLEAR_QUERY, ADD_TO_QUERY } from '../../store/constants';
 
 export default {
   name: 'SearchDropdown',
@@ -66,7 +65,7 @@ export default {
     },
     queryParams() {
       return this.$store.getters.getQueryString;
-    }
+    },
   },
   methods: {
     async refresh() {
@@ -80,14 +79,14 @@ export default {
       }
       this.isLoading = false;
     },
-    async dispatchUpdate() {
+    dispatchUpdate() {
       if (this.clearQuery) {
         this.$store.dispatch(CLEAR_QUERY);
       }
 
       const obj = {};
       obj[`${this.queryParam}`] = this.value;
-      this.$store.commit(ADD_TO_QUERY, obj);
+      this.$store.dispatch(ADD_TO_QUERY, obj);
 
       this.affectedFields.forEach((field) => {
         EventBus.$emit('refresh-field', { fieldSlug: field });
