@@ -18,7 +18,7 @@
 import axios from 'axios';
 import EventBus from '../../EventBus';
 import Spinner from '../Spinner';
-import { CLEAR_QUERY, ADD_TO_QUERY } from '../../store';
+import { CLEAR_QUERY, ADD_TO_QUERY } from '../../store/constants';
 
 export default {
   name: 'SearchDropdown',
@@ -79,14 +79,14 @@ export default {
       }
       this.isLoading = false;
     },
-    async dispatchUpdate() {
+    dispatchUpdate() {
       if (this.clearQuery) {
         this.$store.dispatch(CLEAR_QUERY);
       }
 
       const obj = {};
       obj[`${this.queryParam}`] = this.value;
-      this.$store.commit(ADD_TO_QUERY, obj);
+      this.$store.dispatch(ADD_TO_QUERY, obj);
 
       this.affectedFields.forEach((field) => {
         EventBus.$emit('refresh-field', { fieldSlug: field });

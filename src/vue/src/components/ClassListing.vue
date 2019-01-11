@@ -46,7 +46,7 @@
 
 <script>
 import EventBus from '../EventBus';
-import { UPDATE_CLASSES } from '../store';
+import { UPDATE_CLASSES, REMOVE_FROM_SELCTED } from '../store/constants';
 import ClassListingRow from './ClassListingRow';
 
 export default {
@@ -58,12 +58,14 @@ export default {
     items() {
       return this.$store.getters.getClasses;
     },
+    selected() {
+      return this.$store.getters.getSelected;
+    },
   },
   data() {
     return {
       isLoading: false,
       loadedOnce: false,
-      selected: [],
       headers: [
         { text: 'Title', value: 'title', align: 'left' },
         { text: 'Subject Code', value: 'sc', align: 'center' },
@@ -87,26 +89,13 @@ export default {
       await this.$store.dispatch(UPDATE_CLASSES);
       this.isLoading = false;
     },
-    addToSelected(index) {
-      const item = this.items[index];
-      if (this.selected.indexOf(item) === -1) {
-        this.selected.push(item);
-        EventBus.$emit('insert-to-weekview', item);
-      } else {
-        EventBus.$emit('error', `${item.crn} is already in your selected`);
-      }
-    },
     removeFromSelected(index) {
-      this.selected.splice(index, 1);
-      EventBus.$emit('remove-from-selected', index);
+      this.$store.dispatch(REMOVE_FROM_SELCTED, this.selected[index].crn);
     },
   },
   mounted() {
     EventBus.$on('refresh-field', () => {
       this.loadListing();
-    });
-    EventBus.$on('add-to-selected', (index) => {
-      this.addToSelected(index);
     });
   },
 };

@@ -32,7 +32,7 @@
 
 <script>
 import TimeDateDisplay from './TimeDateDisplay';
-import EventBus from './../EventBus';
+import { ADD_TO_SELCTED } from '../store/constants';
 
 export default {
   name: 'ClassListingRow',
@@ -46,7 +46,7 @@ export default {
   },
   methods: {
     addToSelected() {
-      EventBus.$emit('add-to-selected', this.props.index);
+      this.$store.dispatch(ADD_TO_SELCTED, this.props.item);
     },
   },
 };
