@@ -1,17 +1,16 @@
 <template>
     <div class="o-select__wrapper">
-      <div class="spinner__wrapper" v-if="isLoading">
-        <Spinner/>
-      </div>
-        <v-flex xs12 sm6 d-flex v-if="hasChildren" @refresh="refresh">
-            <v-autocomplete
-              :disabled="isLoading"
-              :items="fields"
-              :label="fieldName"
-              v-model="value">
-              </v-autocomplete>
+      <v-flex xs12 sm6 d-flex @refresh="refresh">
+        <v-autocomplete
+          :disabled="isLoading"
+          :items="fields"
+          :label="fieldName"
+          v-model="value"
+          :loading="isLoading">
+            <v-progress-linear slot="progress" color="red" indeterminate/>
+            <div slot="no-data">{{ fieldName }} has no elements for the selected parameters</div>
+          </v-autocomplete>
         </v-flex>
-        <p v-else>{{ fieldName }} has no elements</p>
     </div>
 </template>
 
@@ -66,7 +65,7 @@ export default {
     },
     queryParams() {
       return this.$store.getters.getQueryString;
-    }
+    },
   },
   methods: {
     async refresh() {

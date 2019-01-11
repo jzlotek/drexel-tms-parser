@@ -17,7 +17,6 @@ export default new Vuex.Store({
     [ADD_TO_QUERY](state, query) {
       Object.entries(query).forEach((entry) => {
         Vue.set(state.query, entry[0], entry[1]);
-        // state.query[entry[0]] = entry[1];
       });
     },
     [CLEAR_QUERY](state) {
