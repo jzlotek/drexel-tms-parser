@@ -1,6 +1,6 @@
 <template>
     <div class="o-select__wrapper">
-      <v-flex xs12 sm6 d-flex @refresh="refresh">
+      <v-card xs12 sm6 d-flex @refresh="refresh">
         <v-autocomplete
           :disabled="isLoading"
           :items="fields"
@@ -10,7 +10,7 @@
             <v-progress-linear slot="progress" color="red" indeterminate/>
             <div slot="no-data">{{ fieldName }} has no elements for the selected parameters</div>
           </v-autocomplete>
-        </v-flex>
+        </v-card>
     </div>
 </template>
 
@@ -24,6 +24,8 @@ import { CLEAR_QUERY, ADD_TO_QUERY } from '../../store/constants';
 const VAutocomplete = () => import('vuetify/es5/components/VAutocomplete/VAutocomplete');
 /* webpackChunkName: "v-progress-linear" */
 const VProgressLinear = () => import('vuetify/es5/components/VProgressLinear/VProgressLinear');
+/* webpackChunkName: "v-card" */
+const VCard = () => import('vuetify/es5/components/VCard/VCard');
 
 export default {
   name: 'SearchDropdown',
@@ -31,6 +33,7 @@ export default {
     Spinner,
     VAutocomplete,
     VProgressLinear,
+    VCard,
   },
   props: {
     fieldName: {

@@ -25,6 +25,8 @@ const ClassListing = () => import('./components/ClassListing');
 const ClassSearch = () => import('./components/ClassSearch');
 /* webpackChunkName: "week-view" */
 const WeekView = () => import('./components/weekview/WeekView');
+/* webpackChunkName: "v-alert" */
+const VAlert = () => import('vuetify/es5/components/VAlert/VAlert');
 
 export default {
   name: 'App',
@@ -33,6 +35,7 @@ export default {
     ClassListing,
     ClassSearch,
     WeekView,
+    VAlert,
   },
   data() {
     return {

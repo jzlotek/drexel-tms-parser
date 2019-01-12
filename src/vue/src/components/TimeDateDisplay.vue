@@ -20,8 +20,14 @@
 </template>
 
 <script>
+/* webpackChunkName: "v-chip" */
+const VChip = () => import('vuetify/es5/components/VChip/VChip');
+
 export default {
   name: 'TimeDateDisplay',
+  components: {
+    VChip,
+  },
   props: {
     times: {
       type: Array,
