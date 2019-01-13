@@ -1,4 +1,4 @@
-from crawler.tms_crawler import Crawler
+from sdk.crawler.tms_crawler import Crawler
 from utils import logger
 
 

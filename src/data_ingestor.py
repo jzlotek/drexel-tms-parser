@@ -1,5 +1,5 @@
 from flask import Flask, request, Response
-from db.db_functions import import_to_db
+from sdk.db.db_functions import import_to_db
 from utils import logger
 import os
 
