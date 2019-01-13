@@ -6,6 +6,8 @@ import Vuex from 'vuex';
 // import 'vuetify/dist/vuetify.min.css';
 import App from './App.vue';
 import store from './store/store';
+import './registerServiceWorker';
+
 
 Vue.config.productionTip = false;
 Vue.use(Vuetify);
