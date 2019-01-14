@@ -1,17 +1,19 @@
 <template>
-    <div class="o-select__wrapper">
-      <v-card xs12 sm6 d-flex @refresh="refresh">
-        <v-autocomplete
-          :disabled="isLoading"
-          :items="fields"
-          :label="fieldName"
-          v-model="value"
-          :loading="isLoading">
-            <v-progress-linear slot="progress" color="red" indeterminate/>
-            <div slot="no-data">{{ fieldName }} has no elements for the selected parameters</div>
-          </v-autocomplete>
-        </v-card>
-    </div>
+  <v-card @refresh="refresh" color="grey darken-3">
+    <v-autocomplete
+      dark
+      :disabled="isLoading"
+      :items="fields"
+      :label="fieldName"
+      v-model="value"
+      :loading="isLoading"
+      color="secondary"
+      :default="def"
+      :chips="true">
+        <v-progress-linear slot="progress" color="secondary" indeterminate/>
+        <div slot="no-data">{{ fieldName }} has no elements for the selected parameters</div>
+      </v-autocomplete>
+    </v-card>
 </template>
 
 <script>
@@ -25,6 +27,8 @@ const VAutocomplete = () => import('vuetify/es5/components/VAutocomplete/VAutoco
 const VProgressLinear = () => import('vuetify/es5/components/VProgressLinear/VProgressLinear');
 /* webpackChunkName: "v-card" */
 const VCard = () => import('vuetify/es5/components/VCard/VCard');
+/* webpackChunkName: "v-chip" */
+const VChip = () => import('vuetify/es5/components/VChip/VChip');
 
 export default {
   name: 'SearchDropdown',
@@ -32,6 +36,7 @@ export default {
     VAutocomplete,
     VProgressLinear,
     VCard,
+    VChip,
   },
   props: {
     fieldName: {
@@ -59,6 +64,9 @@ export default {
       required: false,
       default: false,
     },
+    def: {
+      
+    }
   },
   data() {
     return {

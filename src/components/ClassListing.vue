@@ -4,9 +4,9 @@
       :headers="headers"
       :items="items"
       :loading="isLoading"
-      class="elevation-1"
+      class="elevation-1 text-s-left"
     >
-      <v-progress-linear slot="progress" color="red" indeterminate/>
+      <v-progress-linear slot="progress" color="secondary" indeterminate/>
       <template slot="no-data">
         <v-alert v-if="loadedOnce" :value="true" color="error">
           Sorry, no classes found :(
@@ -27,18 +27,11 @@
             <v-icon>remove_circle</v-icon>
           </v-btn>
           {{ item.course.title }}&nbsp;
+          <v-chip>{{ item.course.sc }} {{ item.course.cn }}-{{ item.sec }}</v-chip>&nbsp;
           <v-btn :href="item.crnLink" target="_blank">{{ item.crn }}</v-btn>
         </div>
-        <v-card>
-          <p class="text-xs-left">{{ item.course.title }}</p><br/>
-          <p class="text-xs-center">{{ item.course.sc }}</p><br/>
-          <p class="text-xs-center">{{ item.course.cn }}</p><br/>
-          <p class="text-xs-center">{{ item.sec }}</p><br/>
-          <p class="text-xs-center">{{ item.course.cr }}</p><br/>
-          <p class="text-xs-center">{{ item.instructor }}</p><br/>
-          <p class="text-xs-center">{{ item.course.it }}</p><br/>
-          <p class="text-xs-center">{{ item.course.im }}</p>
-        </v-card>
+        <ClassListingSelected
+        :item="item"/>
       </v-expansion-panel-content>
     </v-expansion-panel>
   </div>
@@ -49,6 +42,8 @@ import EventBus from '../EventBus';
 import { UPDATE_CLASSES, REMOVE_FROM_SELCTED } from '../store/constants';
 /* webpackChunkName: "class-listing-row" */
 const ClassListingRow = () => import('./ClassListingRow');
+/* webpackChunkName: "class-listing-selected" */
+const ClassListingSelected = () => import('./ClassListingSelected');
 /* webpackChunkName: "v-data-table" */
 const VDataTable = () => import('vuetify/es5/components/VDataTable/VDataTable');
 /* webpackChunkName: "v-progress-linear" */
@@ -63,21 +58,22 @@ const VBtn = () => import('vuetify/es5/components/VBtn/VBtn');
 const VExpansionPanel = () => import('vuetify/es5/components/VExpansionPanel/VExpansionPanel');
 /* webpackChunkName: "v-expansion-panel-content" */
 const VExpansionPanelContent = () => import('vuetify/es5/components/VExpansionPanel/VExpansionPanelContent');
-/* webpackChunkName: "v-expansion-panel-card" */
-const VCard = () => import('vuetify/es5/components/VCard/VCard');
+/* webpackChunkName: "v-chip" */
+const VChip = () => import('vuetify/es5/components/VChip/VChip');
 
 export default {
   name: 'ClassListing',
   components: {
     ClassListingRow,
+    ClassListingSelected,
     VDataTable,
     VProgressLinear,
     VAlert,
     VBtn,
     VExpansionPanelContent,
     VExpansionPanel,
-    VCard,
     VIcon,
+    VChip,
   },
   computed: {
     items() {
@@ -93,18 +89,16 @@ export default {
       loadedOnce: false,
       headers: [
         { text: 'Title', value: 'title', align: 'left' },
-        { text: 'Subject Code', value: 'sc', align: 'center' },
-        { text: 'Course Number', value: 'cn', align: 'center' },
-        { text: 'Section', value: 'sec', align: 'center' },
-        { text: 'Credits', value: 'cr', align: 'center' },
-        { text: 'Instructor', value: 'instructor', align: 'center' },
-        { text: 'Instruction Type', value: 'it', align: 'center' },
-        { text: 'Instruction Method', value: 'im', align: 'center' },
-        { text: 'Status', value: 'status', align: 'center' },
-        { text: 'Enrolled', value: 'enrolled', align: 'center' },
-        { text: 'CRN', value: 'crn', align: 'center' },
-        { text: 'Time and Day', value: 'time_day', align: 'center' },
-        { text: 'Add', value: '', align: 'center' },
+        { text: 'Class', value: '', align: 'left' },
+        { text: 'Credits', value: 'cr', align: 'left' },
+        { text: 'Instructor', value: 'instructor', align: 'left' },
+        { text: 'Instruction Type', value: 'it', align: 'left' },
+        { text: 'Instruction Method', value: 'im', align: 'left' },
+        { text: 'Status', value: 'status', align: 'left' },
+        { text: 'Enrolled', value: 'enrolled', align: 'left' },
+        { text: 'CRN', value: 'crn', align: 'left' },
+        { text: 'Time and Day', value: 'time_day', align: 'left' },
+        { text: 'Add', value: '', align: 'left' },
       ],
     };
   },

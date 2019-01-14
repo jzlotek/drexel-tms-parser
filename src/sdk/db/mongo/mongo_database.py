@@ -9,6 +9,15 @@ import json
 import mongoengine.errors
 import copy
 from utils import logger
+import datetime
+
+
+def get_current_year():
+    now = datetime.datetime.now()
+    year = now.year % 2000
+    if now.month < 9:
+        year -= 1
+    return year
 
 
 class MongoDatabase(Database):
@@ -140,11 +149,7 @@ class MongoDatabase(Database):
         
         if not section_dict.get('year'):
             # fall back to current year
-            import datetime
-            now = datetime.datetime.now()
-            year = now.year % 2000
-            if now.month < 9:
-                year -= 1
+            year = get_current_year()
             section_dict.update({'year': year})
         
         if len(info_dict.items()) != 0:
@@ -208,6 +213,8 @@ class MongoDatabase(Database):
             return sorted(list(set([c.get('course').get('cn') for c in classes])))
         elif l == "years":
             return sorted(list(set([c.year for c in Section.objects()])))
+        elif l == "current-year":
+            return get_current_year()
         return []
 
     @staticmethod

@@ -9,9 +9,9 @@
     "nuke:py": "rm -fr ./**/venv",
     "webapp": "PORT=5000 python ./src/webapp.py",
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "dev": "vue-cli-service build --watch",
     "lint": "vue-cli-service lint",
-    "help": "vue-cli-service build --modern --target app"
+    "build": "vue-cli-service build --modern --target app"
   },
   "dependencies": {
     "axios": "^0.18.0",

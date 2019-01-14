@@ -1,18 +1,32 @@
 <template>
-  <v-app dark id="app">
-    <v-alert
-      :value="alert"
-      type="error"
-      transition="scale-transition"
-      style="position: absolute"
-    >
-      {{ alertData }}
-    </v-alert>
+  <v-app id="app" dark>
+    <v-toolbar color="primary" dark app>
+      <!-- <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon> -->
+      <v-toolbar-title>Drexel TMS</v-toolbar-title>
+    </v-toolbar>
 
-    <ClassSearch/>
-    <ClassListing/>
+    <v-content color="grey darken-2">
+      <v-container fluid fill-height>
+        <v-layout justify-center align-center>
+          <v-flex text-xs-center>
+            <v-alert
+              fixed
+              :value="alert"
+              type="error"
+              transition="scale-transition"
+              style="position: absolute"
+            >
+              {{ alertData }}
+            </v-alert>
 
-    <WeekView :classesInput="[]"></WeekView>
+            <ClassSearch/>
+            <ClassListing/>
+            <WeekView :classesInput="[]"></WeekView>
+
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-content>
   </v-app>
 </template>
 

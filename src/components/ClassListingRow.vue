@@ -1,9 +1,7 @@
 <template>
     <tr>
         <td class="text-xs-left">{{ props.item.course.title }}</td>
-        <td class="text-xs-center">{{ props.item.course.sc }}</td>
-        <td class="text-xs-center">{{ props.item.course.cn }}</td>
-        <td class="text-xs-center">{{ props.item.sec }}</td>
+        <td class="text-xs-left">{{ props.item.course.sc }} {{ props.item.course.cn }}-{{ props.item.sec }}</td>
         <td class="text-xs-center">{{ props.item.course.cr }}</td>
         <td class="text-xs-center">{{ props.item.instructor }}</td>
         <td class="text-xs-center">{{ props.item.course.it }}</td>
@@ -23,7 +21,7 @@
           </TimeDateDisplay>
         </td>
         <td>
-          <v-btn fab small @click="addToSelected()">
+          <v-btn fab small @click="addToSelected()" color="secondary">
               <v-icon>add_circle</v-icon>
           </v-btn>
         </td>
