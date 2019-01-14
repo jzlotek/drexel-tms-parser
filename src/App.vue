@@ -42,6 +42,8 @@ const ClassSearch = () => import('./components/ClassSearch');
 const WeekView = () => import('./components/weekview/WeekView');
 /* webpackChunkName: "v-alert" */
 const VAlert = () => import('vuetify/es5/components/VAlert/VAlert');
+/* webpackChunkName: "v-toolbar" */
+const VToolbar = () => import('vuetify/es5/components/VToolbar/VToolbar');
 
 export default {
   name: 'App',
@@ -51,6 +53,7 @@ export default {
     ClassSearch,
     WeekView,
     VAlert,
+    VToolbar,
   },
   data() {
     return {

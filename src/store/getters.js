@@ -13,12 +13,14 @@ const getters = {
     if (L > 0) {
       queryParams = '?';
       Object.entries(query).forEach((entry) => {
-        const param = `${entry[0]}=${entry[1]}`;
-        if (i > 0) {
-          queryParams += '&';
+        if (entry[1] !== undefined) {
+          const param = `${entry[0]}=${entry[1]}`;
+          if (i > 0) {
+            queryParams += '&';
+          }
+          queryParams += param;
+          i += 1;
         }
-        queryParams += param;
-        i += 1;
       });
     }
     return queryParams;

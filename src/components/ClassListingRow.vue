@@ -1,17 +1,19 @@
 <template>
     <tr>
         <td class="text-xs-left">{{ props.item.course.title }}</td>
-        <td class="text-xs-left">{{ props.item.course.sc }} {{ props.item.course.cn }}-{{ props.item.sec }}</td>
-        <td class="text-xs-center">{{ props.item.course.cr }}</td>
-        <td class="text-xs-center">{{ props.item.instructor }}</td>
-        <td class="text-xs-center">{{ props.item.course.it }}</td>
-        <td class="text-xs-center">{{ props.item.course.im }}</td>
-        <td class="text-xs-center">
+        <td class="text-xs-left">
+          {{ props.item.course.sc }} {{ props.item.course.cn }}-{{ props.item.sec }}
+          </td>
+        <td class="text-xs-left">{{ props.item.course.cr }}</td>
+        <td class="text-xs-left">{{ props.item.instructor }}</td>
+        <td class="text-xs-left">{{ props.item.course.it }}</td>
+        <td class="text-xs-left">{{ props.item.course.im }}</td>
+        <td class="text-xs-left">
           <span v-if="props.item.enrolled < props.item.maxEnroll">OPEN</span>
           <span v-else>FILLED</span>
         </td>
-        <td class="text-xs-center">{{ props.item.enrolled }} / {{ props.item.maxEnroll }}</td>
-        <td class="text-xs-center">
+        <td class="text-xs-left">{{ props.item.enrolled }} / {{ props.item.maxEnroll }}</td>
+        <td class="text-xs-left">
           <v-btn :href="props.item.crnLink" target="_blank">{{ props.item.crn }}</v-btn>
         </td>
         <td>

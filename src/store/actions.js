@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {
-  UPDATE_CLASSES, CLEAR_QUERY, ADD_TO_SELCTED, ADD_TO_QUERY, REMOVE_FROM_SELCTED,
+  UPDATE_CLASSES, CLEAR_QUERY, ADD_TO_SELCTED, ADD_TO_QUERY, REMOVE_FROM_SELCTED, REMOVE_FROM_QUERY,
 } from './constants';
 
 
@@ -18,6 +18,9 @@ const actions = {
       items = [];
     }
     commit(UPDATE_CLASSES, items);
+  },
+  [REMOVE_FROM_QUERY]({ commit }, payload) {
+    commit(REMOVE_FROM_QUERY, payload);
   },
   [ADD_TO_SELCTED]({ commit }, payload) {
     commit(ADD_TO_SELCTED, payload);

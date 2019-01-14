@@ -40,59 +40,62 @@ class MongoDatabase(Database):
         else:
             logger.success('{}'.format(str(self.db)))
 
-    def year(self, year):
-        query = {'year': int(year)}
-        self.query.update(query)
+    def year(self, year, query):
+        q = {'year': int(year)}
+        query.update(q)
 
-    def section(self, section):
-        self.query.update({'sec': section})
+    def section(self, section, query):
+        query.update({'sec': section})
 
-    def crn(self, crn):
-        self.query.update({'crn': int(crn)})
+    def crn(self, crn, query):
+        query.update({'crn': int(crn)})
 
-    def meeting(self, meeting, type_):
+    def meeting(self, meeting, query, type_):
         if type_ == 'days':
             accepted = 'MTWRF'
             if meeting.upper() == "TBD":
-                query = {'meeting': {'days': meeting}}
-                self.query.update(query)
+                q = {'meeting': {'days': meeting}}
+                query.update(q)
                 return
             for index, letter in enumerate(meeting):
                 if letter not in accepted:
                     meeting.splice(index, 1)
 
-            query = {'meeting': {'days': meeting}}
-            self.query.update(query)
+            q = {'meeting': {'days': meeting}}
+            query.update(query)
 
-    def instructor(self, instructor):
-        self.query.update({'instructor': instructor})
+    def instructor(self, instructor, query):
+        query.update({'instructor': instructor})
 
-    def college(self, college):
-        self.query.update({'college': college})
+    def college(self, college, query):
+        query.update({'college': college})
 
-    def course_number(self, cn):
-        self.query.update({'cn': cn})
+    def course_number(self, cn, query):
+        query.update({'cn': cn})
 
-    def subject_code(self, sc):
-        query = {'sc': sc}
-        self.query.update(query)
+    def subject_code(self, sc, query):
+        q = {'sc': sc}
+        query.update(q)
 
-    def instruction_type(self, it):
-        self.query.update({'it': it})
+    def instruction_type(self, it, query):
+        query.update({'it': it})
 
-    def instruction_method(self, im):
-        self.query.update({'im': int(im)})
+    def instruction_method(self, im, query):
+        query.update({'im': int(im)})
 
-    def credits(self, cr):
-        self.query.update({'cr': float(cr)})
+    def credits(self, cr, query):
+        query.update({'cr': float(cr)})
 
-    def before(self, time):
-        self.query.update({'before': time})
+    def semester(self, semester, query):
+        query.update({'semester': semester})
 
-    def after(self, time):
-        self.query.update({'after': time})
+    def before(self, time, query):
+        query.update({'before': time})
 
-    def execute(self):
+    def after(self, time, query):
+        query.update({'after': time})
+
+    def execute(self, query):
         info_dict = dict()
         info_fields = [
             'cr',
@@ -109,7 +112,8 @@ class MongoDatabase(Database):
             'sec',
             'crn',
             'before',
-            'after'
+            'after',
+            "semester"
         ]
         meeting_dict = dict()
         meeting_fields = [
@@ -117,10 +121,10 @@ class MongoDatabase(Database):
         ]
 
         # handle CRN only lookup
-        if self.query.get('crn') is not None:
+        if query.get('crn') is not None:
             try:
                 section = json.loads(
-                    Section.objects.get(crn=self.query.get('crn')).to_json()
+                    Section.objects.get(crn=query.get('crn')).to_json()
                 )
                 course_id = section.get('course')
 
@@ -134,8 +138,7 @@ class MongoDatabase(Database):
                 return []
 
             return section
-
-        for key, value in self.query.items():
+        for key, value in query.items():
             logger.debug('key: {}, value: {}', key, value)
             if key in info_fields:
                 info_dict.update({key: value})
@@ -152,7 +155,7 @@ class MongoDatabase(Database):
             year = get_current_year()
             section_dict.update({'year': year})
         
-        if len(info_dict.items()) != 0:
+        if len(info_dict.items()) != 0 or len(section_dict.items()) != 0:
             course_info_list = json.loads(
                 ClassInfo.objects(__raw__=info_dict).to_json()
             )
@@ -193,12 +196,13 @@ class MongoDatabase(Database):
 
                 if section.get('_id'):
                     del section['_id']
+            
             return course_sections
 
     def get_query(self):
-        return self.query
+        return copy.deepcopy(self.query)
     
-    def get_list(self, l, query=None):
+    def get_list(self, l, query, q=None):
         # subject-codes
         # course-number
         # colleges
@@ -207,12 +211,15 @@ class MongoDatabase(Database):
             codes = sorted(list(set([c.sc for c in ClassInfo.objects()])))
             return codes
         elif l == "course-number":
-            self.subject_code(query.get('sc'))
-            self.year(query.get('year') if query.get('year') else 18)
-            classes = self.execute()
+            if not q.get('sc'):
+                return []
+            
+            self.subject_code(q.get('sc'), query)
+            self.year(q.get('year') if q.get('year') else get_current_year(), query)
+            classes = self.execute(query)
             return sorted(list(set([c.get('course').get('cn') for c in classes])))
-        elif l == "years":
-            return sorted(list(set([c.year for c in Section.objects()])))
+        elif l == "semester":
+            return sorted(list(set([c.semester for c in Section.objects()])))
         elif l == "current-year":
             return get_current_year()
         return []

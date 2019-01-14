@@ -7,7 +7,6 @@ import App from './App.vue';
 import store from './store/store';
 import './registerServiceWorker';
 
-
 Vue.config.productionTip = false;
 Vue.use(Vuetify, {
   theme: {

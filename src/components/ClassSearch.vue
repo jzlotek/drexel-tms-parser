@@ -1,43 +1,21 @@
 <template>
-    <div>
-      <v-container grid-list-md fluid ext-xs-center>
-        <v-layout row wrap justify-center>
-          <v-flex grow xs6 md3>
-            <SearchDropdown
-              fieldSlug="subjectCode"
-              fieldName="Subject Code"
-              apiEndpoint="/api/subject-codes"
-              :affectedFields="subjectCode"
-              queryParam="sc"
-              :clearQuery="true"
-            />
-          </v-flex>
-          <v-flex grow xs6 md3>
-            <SearchDropdown
-              fieldSlug="courseNumber"
-              fieldName="Course Number"
-              apiEndpoint="/api/course-number"
-              :affectedFields="courseNumber"
-              queryParam="cn"
-            />
-          </v-flex>
-          <v-flex grow xs6 md3>
-            <SearchDropdown
-              fieldSlug="year"
-              fieldName="Year"
-              apiEndpoint="/api/years"
-              :affectedFields="year"
-              queryParam="year"
-              :def="getCurrentYear()"
-            />
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </div>
+  <v-container grid-list-md fluid text-xs-center>
+    <v-layout row wrap justify-center>
+      <v-flex grow xs6 md3 v-for="(dropdown, index) in dropdowns" :key="index">
+        <SearchDropdown
+          :fieldSlug="dropdown.fieldSlug"
+          :fieldName="dropdown.fieldName"
+          :apiEndpoint="dropdown.apiEndpoint"
+          :affectedFields="dropdown.affectedFields"
+          :queryParam="dropdown.queryParam"
+          :clearQuery="dropdown.clearQuery"
+        />
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
-<script>
-import axios from 'axios';
 
+<script>
 const SearchDropdown = () => import('./search/SearchDropdown');
 
 export default {
@@ -47,18 +25,33 @@ export default {
   },
   data() {
     return {
-      subjectCode: ['courseNumber'],
-      courseNumber: [''],
-      colleges: ['subjectCode', 'courseNumber'],
-      year: ['subjectCode', 'courseNumber', 'colleges'],
+      dropdowns: [
+        {
+          fieldSlug: 'subjectCode',
+          fieldName: 'Subject Code',
+          apiEndpoint: '/api/subject-codes',
+          affectedFields: ['courseNumber'],
+          queryParam: 'sc',
+          clearQuery: true,
+        },
+        {
+          fieldSlug: 'courseNumber',
+          fieldName: 'Course Number',
+          apiEndpoint: '/api/course-number',
+          affectedFields: [''],
+          queryParam: 'cn',
+          clearQuery: false,
+        },
+        {
+          fieldSlug: 'quarter',
+          fieldName: 'Quarter',
+          apiEndpoint: '/api/semester',
+          affectedFields: ['subjectCode', 'courseNumber', 'colleges'],
+          queryParam: 'semester',
+          clearQuery: false,
+        },
+      ],
     };
-  },
-  methods: {
-    async getCurrentYear() {
-      let year = await axios.get('/api/current-year');
-      year = year.data;
-      return year;
-    }
   },
 };
 </script>

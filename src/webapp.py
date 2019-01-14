@@ -17,17 +17,17 @@ def json_response(data):
 
 @app.route('/course', methods=['GET'])
 def get_course():
-    database.query_builder(request.args)
+    query = database.get_query()
+    database.query_builder(request.args, query)
     logger.info(request.args)
-    logger.info(database.get_query())
-    data = database.execute()
-    database.clear_query()
+    data = database.execute(query)
     return json_response(data)
 
 
-@app.route('/api/<query>', methods=['GET'])
-def get_listing(query):
-    data = database.get_list(query, request.args)
+@app.route('/api/<q>', methods=['GET'])
+def get_listing(q):
+    query = database.get_query()
+    data = database.get_list(q, query, request.args)
     return json_response(data)
 
 @app.after_request

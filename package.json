@@ -9,7 +9,7 @@
     "nuke:py": "rm -fr ./**/venv",
     "webapp": "PORT=5000 python ./src/webapp.py",
     "serve": "vue-cli-service serve",
-    "dev": "vue-cli-service build --watch",
+    "dev": "NODE_ENV=dev vue-cli-service build --watch",
     "lint": "vue-cli-service lint",
     "build": "vue-cli-service build --modern --target app"
   },
@@ -21,6 +21,7 @@
     "vuex": "^3.0.1"
   },
   "devDependencies": {
+    "@gfx/zopfli": "^1.0.10",
     "@vue/cli-plugin-babel": "^3.3.0",
     "@vue/cli-plugin-eslint": "^3.3.0",
     "@vue/cli-plugin-pwa": "^3.3.0",

@@ -19,7 +19,7 @@
 <script>
 import axios from 'axios';
 import EventBus from '../../EventBus';
-import { CLEAR_QUERY, ADD_TO_QUERY } from '../../store/constants';
+import { CLEAR_QUERY, ADD_TO_QUERY, REMOVE_FROM_QUERY } from '../../store/constants';
 
 /* webpackChunkName: "v-auto-complete" */
 const VAutocomplete = () => import('vuetify/es5/components/VAutocomplete/VAutocomplete');
@@ -27,8 +27,6 @@ const VAutocomplete = () => import('vuetify/es5/components/VAutocomplete/VAutoco
 const VProgressLinear = () => import('vuetify/es5/components/VProgressLinear/VProgressLinear');
 /* webpackChunkName: "v-card" */
 const VCard = () => import('vuetify/es5/components/VCard/VCard');
-/* webpackChunkName: "v-chip" */
-const VChip = () => import('vuetify/es5/components/VChip/VChip');
 
 export default {
   name: 'SearchDropdown',
@@ -36,7 +34,6 @@ export default {
     VAutocomplete,
     VProgressLinear,
     VCard,
-    VChip,
   },
   props: {
     fieldName: {
@@ -64,9 +61,7 @@ export default {
       required: false,
       default: false,
     },
-    def: {
-      
-    }
+    def: {},
   },
   data() {
     return {
@@ -87,6 +82,7 @@ export default {
     async refresh() {
       let fields;
       this.isLoading = true;
+      // this.$store.dispatch(REMOVE_FROM_QUERY, this.queryParam);
       try {
         fields = await axios.get(`${this.apiEndpoint}${this.queryParams}`);
         this.fields = fields.data;
@@ -104,9 +100,9 @@ export default {
       obj[`${this.queryParam}`] = this.value;
       this.$store.dispatch(ADD_TO_QUERY, obj);
 
-      this.affectedFields.forEach((field) => {
-        EventBus.$emit('refresh-field', { fieldSlug: field });
-      });
+      // this.affectedFields.forEach((field) => {
+      //   EventBus.$emit('refresh-field', { fieldSlug: field });
+      // });
     },
   },
   watch: {
@@ -116,9 +112,9 @@ export default {
   },
   mounted() {
     EventBus.$on('refresh-field', (event) => {
-      if (event.fieldSlug === this.fieldSlug) {
-        this.refresh();
-      }
+      // if (event.fieldSlug === this.fieldSlug) {
+      this.refresh();
+      // }
     });
     this.refresh();
   },
