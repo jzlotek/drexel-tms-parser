@@ -9,9 +9,11 @@
       :loading="isLoading"
       color="secondary"
       :default="def"
-      :chips="true">
+      >
         <v-progress-linear slot="progress" color="secondary" indeterminate/>
-        <div slot="no-data">{{ fieldName }} has no elements for the selected parameters</div>
+        <div color="error" slot="no-data">
+          {{ fieldName }} has no elements for the selected parameters
+        </div>
       </v-autocomplete>
     </v-card>
 </template>
@@ -82,7 +84,6 @@ export default {
     async refresh() {
       let fields;
       this.isLoading = true;
-      // this.$store.dispatch(REMOVE_FROM_QUERY, this.queryParam);
       try {
         fields = await axios.get(`${this.apiEndpoint}${this.queryParams}`);
         this.fields = fields.data;
@@ -99,22 +100,22 @@ export default {
       const obj = {};
       obj[`${this.queryParam}`] = this.value;
       this.$store.dispatch(ADD_TO_QUERY, obj);
-
-      // this.affectedFields.forEach((field) => {
-      //   EventBus.$emit('refresh-field', { fieldSlug: field });
-      // });
     },
   },
   watch: {
     value() {
-      this.dispatchUpdate();
+      if (this.value) {
+        this.dispatchUpdate();
+      }
     },
   },
   mounted() {
-    EventBus.$on('refresh-field', (event) => {
-      // if (event.fieldSlug === this.fieldSlug) {
+    EventBus.$on('refresh-field', () => {
       this.refresh();
-      // }
+      if (this.value && !this.fields.includes(this.value)) {
+        this.$store.dispatch(REMOVE_FROM_QUERY, this.queryParam);
+        EventBus.$emit('refresh-listing');
+      }
     });
     this.refresh();
   },

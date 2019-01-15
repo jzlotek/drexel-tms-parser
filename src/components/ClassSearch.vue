@@ -27,6 +27,14 @@ export default {
     return {
       dropdowns: [
         {
+          fieldSlug: 'quarter',
+          fieldName: 'Quarter',
+          apiEndpoint: '/api/semester',
+          affectedFields: ['subjectCode', 'courseNumber', 'colleges'],
+          queryParam: 'semester',
+          clearQuery: false,
+        },
+        {
           fieldSlug: 'subjectCode',
           fieldName: 'Subject Code',
           apiEndpoint: '/api/subject-codes',
@@ -40,14 +48,6 @@ export default {
           apiEndpoint: '/api/course-number',
           affectedFields: [''],
           queryParam: 'cn',
-          clearQuery: false,
-        },
-        {
-          fieldSlug: 'quarter',
-          fieldName: 'Quarter',
-          apiEndpoint: '/api/semester',
-          affectedFields: ['subjectCode', 'courseNumber', 'colleges'],
-          queryParam: 'semester',
           clearQuery: false,
         },
       ],

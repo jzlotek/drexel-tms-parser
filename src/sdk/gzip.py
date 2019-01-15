@@ -1,5 +1,5 @@
 from flask import after_this_request, request
-from io import StringIO as IO
+from io import BytesIO as IO
 import gzip
 import functools 
 
@@ -15,12 +15,12 @@ def gzipped(f):
 
             response.direct_passthrough = False
 
-            if (response.status_code < 200 or
+            if (response.status_code <= 200 or
                 response.status_code >= 300 or
                 'Content-Encoding' in response.headers):
                 return response
             gzip_buffer = IO()
-            gzip_file = gzip.GzipFile(mode='wb', 
+            gzip_file = gzip.GzipFile(mode='wb',
                                       fileobj=gzip_buffer)
             gzip_file.write(response.data)
             gzip_file.close()

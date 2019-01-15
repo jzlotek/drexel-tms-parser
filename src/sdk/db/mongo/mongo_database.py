@@ -40,6 +40,8 @@ class MongoDatabase(Database):
         else:
             logger.success('{}'.format(str(self.db)))
 
+        self.semesters = sorted(list(set([c.semester for c in Section.objects()])))
+
     def year(self, year, query):
         q = {'year': int(year)}
         query.update(q)
@@ -213,13 +215,17 @@ class MongoDatabase(Database):
         elif l == "course-number":
             if not q.get('sc'):
                 return []
-            
+            if q.get('semester'):
+                self.semester(q.get('semester'), query)
+
             self.subject_code(q.get('sc'), query)
             self.year(q.get('year') if q.get('year') else get_current_year(), query)
             classes = self.execute(query)
             return sorted(list(set([c.get('course').get('cn') for c in classes])))
         elif l == "semester":
-            return sorted(list(set([c.semester for c in Section.objects()])))
+            if len(self.semesters) == 0:
+                self.semesters = sorted(list(set([c.semester for c in Section.objects()])))
+            return self.semesters
         elif l == "current-year":
             return get_current_year()
         return []

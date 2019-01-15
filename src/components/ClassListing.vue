@@ -116,6 +116,9 @@ export default {
     EventBus.$on('refresh-field', () => {
       this.loadListing();
     });
+    EventBus.$on('refresh-listing', () => {
+      this.loadListing();
+    });
   },
 };
 </script>

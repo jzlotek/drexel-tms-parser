@@ -39,6 +39,7 @@ def add_header(response):
     return response
 
 @app.route('/', methods=["GET"])
+@gzipped
 def get_home():
     # needs the index to be in the dist folder to work
     return send_from_directory('../dist', 'index.html')
