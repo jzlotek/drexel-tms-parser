@@ -89,6 +89,7 @@ export default {
       loadedOnce: false,
       headers: [
         { text: 'Title', value: 'title', align: 'left' },
+        { text: 'Quarter', value: '', align: 'left' },
         { text: 'Class', value: '', align: 'left' },
         { text: 'Credits', value: 'cr', align: 'left' },
         { text: 'Instructor', value: 'instructor', align: 'left' },

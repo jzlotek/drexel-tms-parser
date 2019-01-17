@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     debug = False
     if os.environ.get('DEBUG'):
-        debug = bool(os.environ.get('DEBUG'))
+        debug = os.environ.get('DEBUG').lower() == 'true'
     try:
         app.run(host='0.0.0.0', port=PORT, debug=debug, threaded=True)
     except Exception as e:

@@ -1,7 +1,7 @@
-from db import database
+from sdk.db import database
 import os
 import json
-from db.mongo.schema import ClassInfo
+from sdk.db.mongo.schema import ClassInfo
 from bson.objectid import ObjectId
 from utils import logger
 

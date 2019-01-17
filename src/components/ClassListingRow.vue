@@ -1,6 +1,7 @@
 <template>
     <tr>
         <td class="text-xs-left">{{ props.item.course.title }}</td>
+        <td>{{ props.item.semester }}</td>
         <td class="text-xs-left">
           {{ props.item.course.sc }} {{ props.item.course.cn }}-{{ props.item.sec }}
           </td>

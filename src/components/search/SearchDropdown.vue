@@ -9,6 +9,7 @@
       :loading="isLoading"
       color="secondary"
       :default="def"
+      :clearable="true"
       >
         <v-progress-linear slot="progress" color="secondary" indeterminate/>
         <div color="error" slot="no-data">
@@ -81,6 +82,10 @@ export default {
     },
   },
   methods: {
+    clearSelf() {
+      this.$store.dispatch(REMOVE_FROM_QUERY, this.queryParam);
+      // EventBus.$emit('refresh-listing');
+    },
     async refresh() {
       let fields;
       this.isLoading = true;

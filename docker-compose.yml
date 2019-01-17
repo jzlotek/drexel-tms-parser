@@ -55,16 +55,29 @@ services:
     networks:
       - drexel-tms-network
 
-  webserver:
-    image: nginx:alpine
+  nginx:
+    image: drexel-tms-nginx
     container_name: drexel-tms-nginx
+    build:
+      context: .
+      dockerfile: ./nginx.Dockerfile
     restart: unless-stopped
     tty: true
     ports:
-      - "8080:8080"
-      - "8443:8443"
+      - "8080:80"
+      - "8443:443"
     networks:
       - drexel-tms-network
+    depends_on:
+      - drexel-tms-webserver
+      - drexel-tms-ingest
+      - drexel-tms-crawler
+    links:
+      - drexel-tms-webserver
+      - drexel-tms-ingest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      # - /etc/letsencrypt/:/etc/letsencrypt/
 
 networks:
   drexel-tms-network:
