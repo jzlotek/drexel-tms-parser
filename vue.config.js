@@ -9,7 +9,7 @@ module.exports = {
   productionSourceMap: false,
   parallel: true,
   css: {
-    extract: false,
+    extract: true,
   },
 
   pwa: {

@@ -1,8 +1,18 @@
-FROM python:3.7.2-stretch
+FROM python:3.7.2-stretch as python-build
+WORKDIR /home/drexel-tms-parser
+
+RUN pip3 install virtualenv
+
+RUN virtualenv ./venv -p python3
+
+RUN /bin/bash -c "source ./venv/bin/activate"
+
+COPY requirements.txt /home/drexel-tms-parser
+RUN pip3 install -r ./requirements.txt
 
 # BEGIN NPM installation
+COPY --from=python-build /home/drexel-tms-parser /home/drexel-tms-parser
 COPY . /home/drexel-tms-parser
-WORKDIR /home/drexel-tms-parser
 
 ARG NODE_CMD=''
 ENV NODE_CMD=$NODE_CMD
@@ -15,12 +25,6 @@ ENV PORT=$PORT
 ARG SERVLET=''
 ENV SERVLET=$SERVLET
 
-RUN pip3 install virtualenv
-
-RUN virtualenv ./venv -p python3
-
-RUN /bin/bash -c "source ./venv/bin/activate"
-RUN pip3 install -r ./requirements.txt
 
 EXPOSE $PORT
 
