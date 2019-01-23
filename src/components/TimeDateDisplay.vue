@@ -1,33 +1,16 @@
 <template>
-  <div class="o-time-date">
-    <div>
-      <span v-if="days != 'TBD'">
-        <v-chip  v-for="(char, index) in days" :key="index" d-inline-flex>
-          {{ char }}
-        </v-chip>
-      </span>
-      <v-chip v-else d-inline-flex>TBD</v-chip>
-    </div>
-    <div>
-      <span v-if="times && times.length > 0">
-        <v-chip v-for="(time, index) in times" :key="index" d-inline-flex>
-          {{ time }}
-        </v-chip>
-      </span>
-      <v-chip v-else d-inline-flex>TBD</v-chip>
-    </div>
+  <div class="c-time-date">
+    <v-chip>{{ days }}</v-chip>
+    <v-chip v-if="times && times.length > 0">
+      {{ times[0] }} to {{ times[1] }}
+    </v-chip>
+    <v-chip v-else d-inline-flex>TBD</v-chip>
   </div>
 </template>
 
 <script>
-/* webpackChunkName: "v-chip" */
-const VChip = () => import('vuetify/es5/components/VChip/VChip');
-
 export default {
   name: 'TimeDateDisplay',
-  components: {
-    VChip,
-  },
   props: {
     times: {
       type: Array,
@@ -42,5 +25,7 @@ export default {
 </script>
 
 <style>
-
+.c-time-date {
+  display: inline-flex;
+}
 </style>

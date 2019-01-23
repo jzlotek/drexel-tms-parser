@@ -34,10 +34,6 @@
 <script>
 import { ADD_TO_SELCTED } from '../store/constants';
 
-/* webpackChunkName: "v-btn" */
-const VBtn = () => import('vuetify/es5/components/VBtn/VBtn');
-/* webpackChunkName: "v-icon" */
-const VIcon = () => import('vuetify/es5/components/VIcon/VIcon');
 /* webpackChunkName: "time-date-display" */
 const TimeDateDisplay = () => import('./TimeDateDisplay');
 
@@ -45,8 +41,6 @@ export default {
   name: 'ClassListingRow',
   components: {
     TimeDateDisplay,
-    VBtn,
-    VIcon,
   },
   props: {
     props: {

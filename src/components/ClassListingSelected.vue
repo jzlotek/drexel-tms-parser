@@ -9,17 +9,8 @@
 </template>
 
 <script>
-/* webpackChunkName: "v-card" */
-const VCard = () => import('vuetify/es5/components/VCard/VCard');
-/* webpackChunkName: "v-chip" */
-const VChip = () => import('vuetify/es5/components/VChip/VChip');
-
 export default {
   name: 'ClassListingSelected',
-  components: {
-    VCard,
-    VChip,
-  },
   props: {
     item: {
       type: Object,

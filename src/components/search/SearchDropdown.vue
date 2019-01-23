@@ -24,20 +24,8 @@ import axios from 'axios';
 import EventBus from '../../EventBus';
 import { CLEAR_QUERY, ADD_TO_QUERY, REMOVE_FROM_QUERY } from '../../store/constants';
 
-/* webpackChunkName: "v-auto-complete" */
-const VAutocomplete = () => import('vuetify/es5/components/VAutocomplete/VAutocomplete');
-/* webpackChunkName: "v-progress-linear" */
-const VProgressLinear = () => import('vuetify/es5/components/VProgressLinear/VProgressLinear');
-/* webpackChunkName: "v-card" */
-const VCard = () => import('vuetify/es5/components/VCard/VCard');
-
 export default {
   name: 'SearchDropdown',
-  components: {
-    VAutocomplete,
-    VProgressLinear,
-    VCard,
-  },
   props: {
     fieldName: {
       type: String,

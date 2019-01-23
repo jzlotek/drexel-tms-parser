@@ -44,36 +44,13 @@ import { UPDATE_CLASSES, REMOVE_FROM_SELCTED } from '../store/constants';
 const ClassListingRow = () => import('./ClassListingRow');
 /* webpackChunkName: "class-listing-selected" */
 const ClassListingSelected = () => import('./ClassListingSelected');
-/* webpackChunkName: "v-data-table" */
-const VDataTable = () => import('vuetify/es5/components/VDataTable/VDataTable');
-/* webpackChunkName: "v-progress-linear" */
-const VProgressLinear = () => import('vuetify/es5/components/VProgressLinear/VProgressLinear');
-/* webpackChunkName: "v-alert" */
-const VAlert = () => import('vuetify/es5/components/VAlert/VAlert');
-/* webpackChunkName: "v-icon" */
-const VIcon = () => import('vuetify/es5/components/VIcon/VIcon');
-/* webpackChunkName: "v-btn" */
-const VBtn = () => import('vuetify/es5/components/VBtn/VBtn');
-/* webpackChunkName: "v-expansion-panel" */
-const VExpansionPanel = () => import('vuetify/es5/components/VExpansionPanel/VExpansionPanel');
-/* webpackChunkName: "v-expansion-panel-content" */
-const VExpansionPanelContent = () => import('vuetify/es5/components/VExpansionPanel/VExpansionPanelContent');
-/* webpackChunkName: "v-chip" */
-const VChip = () => import('vuetify/es5/components/VChip/VChip');
+
 
 export default {
   name: 'ClassListing',
   components: {
     ClassListingRow,
     ClassListingSelected,
-    VDataTable,
-    VProgressLinear,
-    VAlert,
-    VBtn,
-    VExpansionPanelContent,
-    VExpansionPanel,
-    VIcon,
-    VChip,
   },
   computed: {
     items() {
@@ -82,25 +59,27 @@ export default {
     selected() {
       return this.$store.getters.getSelected;
     },
-  },
-  data() {
-    return {
-      isLoading: false,
-      loadedOnce: false,
-      headers: [
+    headers() {
+      return [
         { text: 'Title', value: 'title', align: 'left' },
         { text: 'Quarter', value: '', align: 'left' },
         { text: 'Class', value: '', align: 'left' },
         { text: 'Credits', value: 'cr', align: 'left' },
         { text: 'Instructor', value: 'instructor', align: 'left' },
-        { text: 'Instruction Type', value: 'it', align: 'left' },
-        { text: 'Instruction Method', value: 'im', align: 'left' },
+        { text: 'Type', value: 'it', align: 'left' },
+        { text: 'Method', value: 'im', align: 'left' },
         { text: 'Status', value: 'status', align: 'left' },
         { text: 'Enrolled', value: 'enrolled', align: 'left' },
         { text: 'CRN', value: 'crn', align: 'left' },
         { text: 'Time and Day', value: 'time_day', align: 'left' },
         { text: 'Add', value: '', align: 'left' },
-      ],
+      ];
+    },
+  },
+  data() {
+    return {
+      isLoading: false,
+      loadedOnce: false,
     };
   },
   methods: {

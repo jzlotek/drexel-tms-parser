@@ -1,5 +1,6 @@
 const CompressionPlugin = require('compression-webpack-plugin');
 const zopfli = require('@gfx/zopfli');
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin');
 
 module.exports = {
   runtimeCompiler: true,
@@ -22,6 +23,7 @@ module.exports = {
       minimize: true,
     },
     plugins: process.env.NODE_ENV === 'production' ? [
+      new VuetifyLoaderPlugin(),
       new CompressionPlugin({
         filename: '[path].gz[query]',
         compressionOptions: {

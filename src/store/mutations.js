@@ -9,6 +9,7 @@ import {
 } from './constants';
 import EventBus from '../EventBus';
 
+/* eslint-disable no-param-reassign */
 const mutations = {
   [ADD_TO_QUERY](state, query) {
     Object.entries(query).forEach((entry) => {
@@ -17,7 +18,6 @@ const mutations = {
     EventBus.$emit('refresh-field');
   },
   [CLEAR_QUERY](state) {
-    /*eslint-disable */
     state.query = {};
   },
   [REMOVE_FROM_QUERY](state, param) {
@@ -26,7 +26,6 @@ const mutations = {
   },
   [UPDATE_CLASSES](state, items) {
     state.classes = items;
-    /* eslint-enable */
   },
   [ADD_TO_SELCTED](state, c) {
     Vue.set(state.selected, state.selected.length, c);
@@ -38,5 +37,5 @@ const mutations = {
     }
   },
 };
-
+/* eslint-enable no-param-reassign */
 export default mutations;

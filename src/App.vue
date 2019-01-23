@@ -1,7 +1,7 @@
 <template>
   <v-app id="app" dark>
     <v-toolbar color="primary" dark app>
-      <!-- <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon> -->
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title>Drexel TMS</v-toolbar-title>
     </v-toolbar>
 
@@ -40,10 +40,6 @@ const ClassListing = () => import('./components/ClassListing');
 const ClassSearch = () => import('./components/ClassSearch');
 /* webpackChunkName: "week-view" */
 const WeekView = () => import('./components/weekview/WeekView');
-/* webpackChunkName: "v-alert" */
-const VAlert = () => import('vuetify/es5/components/VAlert/VAlert');
-/* webpackChunkName: "v-toolbar" */
-const VToolbar = () => import('vuetify/es5/components/VToolbar/VToolbar');
 
 export default {
   name: 'App',
@@ -52,13 +48,12 @@ export default {
     ClassListing,
     ClassSearch,
     WeekView,
-    VAlert,
-    VToolbar,
   },
   data() {
     return {
       alert: false,
       alertData: null,
+      drawer: false,
       obj: {
         course: {
           college: 'Antoinette Westphal COMAD', isQuarter: true, cn: '785', sc: 'AADM', it: 'Lecture', title: 'Research Design in the Arts', im: 'Online', cr: 3,
