@@ -2,6 +2,7 @@ from sdk.db import database
 import os
 import json
 from sdk.db.mongo.schema import ClassInfo
+from sdk.db.mongo.schema import Section
 from bson.objectid import ObjectId
 from utils import logger
 
@@ -25,6 +26,52 @@ def get_class_info(sc, cn, it, isQuarter, im):
         return None
 
 
+def get_class_section(course, year, crn, semester):
+    try:
+        res = Section.objects.get(
+            course=course, year=year, crn=crn, semester=semester
+        )
+        return res.to_json()
+    except:
+        return None
+
+
+def get_and_import_class_section(course, ins, crn, sec, year, date_time,
+                                 currently_enrolled, maximum_enrolled, semester):
+    section = get_class_section(course, year, crn, semester)
+
+    if section is None:
+        course = database.create_course_section(
+                            str(course),
+                            year,
+                            ins,
+                            crn[0],
+                            crn[1],
+                            sec.upper(),
+                            date_time,
+                            maximum_enrolled,
+                            currently_enrolled,
+                            semester
+                            )
+        course.save()
+        return
+
+    section = json.loads(section)
+    if section.get('maxEnroll') != maximum_enrolled and maximum_enrolled != 0:
+        success = ClassInfo.objects.update(id=ObjectId(section.get('_id').get('$oid')), maxEnroll=maximum_enrolled)
+        if success:
+            logger.success('updated: {} with {}', section.get('_id'), {'maxEnrolll': maximum_enrolled})
+        else:
+            logger.error('failed to update: {} with {}', section.get('_id'), {'maxEnroll': maximum_enrolled})
+
+    if section.get('enrolled') != currently_enrolled:
+            success = ClassInfo.objects.update(id=ObjectId(section.get('_id').get('$oid')), enrolled=currently_enrolled)
+            if success:
+                logger.success('updated: {} with {}', section.get('_id'), {'enrolled': currently_enrolled})
+            else:
+                logger.error('failed to update: {} with {}', section.get('_id'), {'enrolled': currently_enrolled})
+
+
 def get_class_info_by_id(id):
     try:
         res = ClassInfo.objects.get(id=ObjectId(id))
@@ -46,8 +93,15 @@ def get_and_import_info(college, isQuarter, cn, sc, it, title, cr, im):
             logger.critical('{} {} {} {} {} failed. Perhaps the connection to the db is severed',
                             sc, cn, it, isQuarter, im)
             return ''
-
-    c = ObjectId(json.loads(c).get('_id').get('$oid'))
+    c = json.loads(c)
+    if c.get('cr') != cr and cr != 0:
+        success = ClassInfo.objects.get(id=ObjectId(c.get('_id').get('$oid'))).update(cr=cr)
+        logger.info('Success value: {}', success)
+        if success:
+            logger.success('updated: {} with {}', c.get('_id'), {'cr': cr})
+        else:
+            logger.success('failed to update: {} with {}', c.get('_id'), {'cr': cr})
+    c = ObjectId(c.get('_id').get('$oid'))
     logger.info('ID: {}', c)
 
     return c
@@ -59,40 +113,36 @@ def import_to_db(json_data, fname):
         college_name = college.get('collegeName')
 
         for class_category in college.get('collegeSubcategories'):
+            # the "college" the class is in
             subsection_name = class_category.get('classesCategory')
 
             for _class in class_category.get('classes'):
                 if _class.get('index') == 0:
                     continue
-                try:
-                    course_id = get_and_import_info(
-                        college_name,
-                        '-Q' in fname,
-                        _class.get('CN'),
-                        _class.get('SC').upper(),
-                        _class.get('IT'),
-                        _class.get('CT'),
-                        float(_class.get('CR')) if _class.get('CR') else 0.0,
-                        _class.get('IM')
-                    )
 
-                    course = database.create_course_section(
-                        str(course_id),
-                        int(fname[4:].split('_')[0]),
-                        _class.get('IN'),
-                        _class.get('CRN')[0],
-                        _class.get('CRN')[1],
-                        _class.get('SEC').upper(),
-                        create_dt_obj(_class.get('DT')),
-                        int(_class.get('MAX')) if _class.get('MAX') else 0,
-                        int(_class.get('ENROLLED')) if _class.get(
-                            'ENROLLED') else 0,
-                        str(fname.split('-')[0]).upper()
-                    )
-                    course.save()
-                except ValueError as e:
-                    logger.error('CR: {}', _class.get('CR'))
-                    exit(0)
+                course_id = get_and_import_info(
+                    college_name,
+                    '-Q' in fname,
+                    _class.get('CN'),
+                    _class.get('SC').upper(),
+                    _class.get('IT'),
+                    _class.get('CT'),
+                    float(_class.get('CR')) if _class.get('CR') else 0.0,
+                    _class.get('IM')
+                )
+
+                get_and_import_class_section(
+                    str(course_id),
+                    _class.get('IN'),
+                    _class.get('CRN'),
+                    _class.get('SEC').upper(),
+                    int(fname[4:].split('_')[0]),
+                    create_dt_obj(_class.get('DT')),
+                    int(_class.get('ENROLLED')) if _class.get(
+                        'ENROLLED') else 0,
+                    int(_class.get('MAX')) if _class.get('MAX') else 0,
+                    str(fname.split('-')[0]).upper(),
+                )
 
 
 if __name__ == '__main__':

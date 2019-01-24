@@ -2,6 +2,7 @@ from flask import Flask, request, Response
 from sdk.db.db_functions import import_to_db
 from utils import logger
 import os
+import json
 
 app = Flask(__name__)
 
@@ -17,6 +18,7 @@ def ingest():
 
     return Response("", status=400)
 
-PORT = int(os.environ['PORT']) if os.environ['PORT'] else 5001
+if __name__ == "__main__":
+    PORT = int(os.environ['PORT']) if os.environ.get('PORT') else 5001
 
-app.run(host="0.0.0.0", port=PORT, debug=True, threaded=True)
+    app.run(host="0.0.0.0", port=PORT, debug=True, threaded=True)

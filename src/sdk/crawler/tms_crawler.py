@@ -6,6 +6,7 @@ from sdk.crawler.constants import BASE_URL, GREEN, RESET, BOLD, BLUE, RED, CYAN
 from sdk.crawler.utility import RowData, TMSClass, Encoder
 from utils import logger
 import multiprocessing
+import time
 
 
 def get_page(page, meta="", retries=3):
@@ -211,20 +212,23 @@ class Crawler:
         self.quarters = get_links_to_terms(page)
 
     def crawl(self):
-        logger.info("Starting to crawl pages")
-        processes = []
-        if self.multiprocessing:
-            for quarter in self.quarters:
 
-                process = multiprocessing.Process(target=run_on_page, args=(quarter,))
-                processes.append(process)
-                process.start()
+        while True:
+            logger.info("Starting to crawl pages")
+            processes = []
+            if self.multiprocessing:
+                for quarter in self.quarters:
 
-            for process in processes:
-                process.join()
-        else:
-            for quarter in self.quarters:
-                run_on_page(quarter)
+                    process = multiprocessing.Process(target=run_on_page, args=(quarter,))
+                    processes.append(process)
+                    process.start()
 
+                for process in processes:
+                    process.join()
+            else:
+                for quarter in self.quarters:
+                    run_on_page(quarter)
+            logger.info('Done. Sleeping')
+            time.sleep(60 * 60 * 24)
             # with open('./.tmp/{}.json'.format(quarter[0]), 'w') as _file:
             # _file.write(json.dumps(all_classes, cls=Encoder, indent=4))
