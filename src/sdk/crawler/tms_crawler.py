@@ -189,6 +189,8 @@ def run_on_page(quarter):
         return
 
     all_classes = get_colleges_from_side_left(page, threaded=True)
+    # with open(quarter[0]+ '.json', 'w') as f:
+    #     f.writelines(json.dumps(all_classes, cls=Encoder))
     requests.post('http://drexel-tms-ingest:5001/ingest', json=dict(
         data=json.dumps(all_classes, cls=Encoder),
         name=quarter[0]

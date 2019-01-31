@@ -1,5 +1,5 @@
 from flask import Flask, request, Response
-from sdk.db.db_functions import import_to_db
+from sdk.db.db_functions import import_to_db, import_to_db_bulk, import_to_db_single
 from utils import logger
 import os
 import json
@@ -10,9 +10,16 @@ app = Flask(__name__)
 @app.route('/ingest', methods=['POST'])
 def ingest():
     logger.info(request)
+    mode = request.args.get('mode')
     if request.json:
         # created
+        # if not mode:
         import_to_db(request.json.get('data'), request.json.get('name'))
+        # elif mode == 'single':
+            # body = request.json
+            # import_to_db_single(body.get('college_name'), body.get('data'), body.get('name'))
+        # else:
+            # return Response('{"status": 401, "reason": "unknown ingest mode: {mode}"}'.format(mode=mode), status=401, mimetype="application/json")
 
         return Response("", status=201)
 

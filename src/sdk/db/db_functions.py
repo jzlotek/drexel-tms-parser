@@ -29,7 +29,7 @@ def get_class_info(sc, cn, it, isQuarter, im):
 def get_class_section(course, year, crn, semester):
     try:
         res = Section.objects.get(
-            course=course, year=year, crn=crn, semester=semester
+            course=course, year=year, crn=crn[0], semester=semester
         )
         return res.to_json()
     except:
@@ -41,11 +41,11 @@ def get_and_import_class_section(course, ins, crn, sec, year, date_time,
     section = get_class_section(course, year, crn, semester)
 
     if section is None:
-        course = database.create_course_section(
+        section = database.create_course_section(
                             str(course),
                             year,
                             ins,
-                            crn[0],
+                            int(crn[0]),
                             crn[1],
                             sec.upper(),
                             date_time,
@@ -53,24 +53,43 @@ def get_and_import_class_section(course, ins, crn, sec, year, date_time,
                             currently_enrolled,
                             semester
                             )
-        course.save()
-        return
+        section.save()
+        logger.info("Created new section: {} {} {}", course, crn[0], sec.upper(), semester)
+        return section
 
     section = json.loads(section)
+    _id = ObjectId(section.get('_id').get('$oid'))
+
     if section.get('maxEnroll') != maximum_enrolled and maximum_enrolled != 0:
-        success = ClassInfo.objects.update(id=ObjectId(section.get('_id').get('$oid')), maxEnroll=maximum_enrolled)
+        success = Section.objects.update(id=_id, maxEnroll=maximum_enrolled)
         if success:
-            logger.success('updated: {} with {}', section.get('_id'), {'maxEnrolll': maximum_enrolled})
+            logger.success('updated: {} with {}', _id, {'maxEnrolll': maximum_enrolled})
         else:
-            logger.error('failed to update: {} with {}', section.get('_id'), {'maxEnroll': maximum_enrolled})
+            logger.error('failed to update: {} with {}', _id, {'maxEnroll': maximum_enrolled})
 
     if section.get('enrolled') != currently_enrolled:
-            success = ClassInfo.objects.update(id=ObjectId(section.get('_id').get('$oid')), enrolled=currently_enrolled)
-            if success:
-                logger.success('updated: {} with {}', section.get('_id'), {'enrolled': currently_enrolled})
-            else:
-                logger.error('failed to update: {} with {}', section.get('_id'), {'enrolled': currently_enrolled})
+        success = Section.objects.update(id=_id, enrolled=currently_enrolled)
+        if success:
+            logger.success('updated: {} with {}', _id, {'enrolled': currently_enrolled})
+        else:
+            logger.error('failed to update: {} with {}', _id, {'enrolled': currently_enrolled})
 
+    if section.get('meeting'):
+        if section.get('meeting').get('days') != date_time.get('days') and date_time.get('days') != '':
+            success = Section.objects.update(id=_id, meeting__days=date_time.get('days'))
+            if success:
+                logger.success('updated: {} with {}', _id, {'meeting__days': date_time.get('days')})
+            else:
+                logger.error('failed to update: {} with {}', _id, {'meeting__days': date_time.get('days')})
+
+        if section.get('meeting').get('times') != date_time.get('times') and date_time.get('times') is not None and len(date_time.get('times')) == 2:
+            success = Section.objects.update(id=_id, meeting__times=date_time.get('times'))
+            if success:
+                logger.success('updated: {} with {}', _id, {'meeting__times': date_time.get('times')})
+            else:
+                logger.error('failed to update: {} with {}', _id, {'meeting__times': date_time.get('times')})
+
+    return json.loads(Section.objects.get(id=_id).to_json())
 
 def get_class_info_by_id(id):
     try:
@@ -80,6 +99,7 @@ def get_class_info_by_id(id):
         return None
 
 
+@logger.catch
 def get_and_import_info(college, isQuarter, cn, sc, it, title, cr, im):
     c = get_class_info(sc, cn, it, isQuarter, im)
 
@@ -107,6 +127,49 @@ def get_and_import_info(college, isQuarter, cn, sc, it, title, cr, im):
     return c
 
 
+def import_to_db_single(college_name, _class, class_meta):
+    course_id = get_and_import_info(
+        college_name,
+        '-Q' in class_meta,
+        _class.get('CN'),
+        _class.get('SC').upper(),
+        _class.get('IT'),
+        _class.get('CT'),
+        float(_class.get('CR')) if _class.get('CR') else 0.0,
+        _class.get('IM')
+    )
+
+    section = get_and_import_class_section(
+        str(course_id),
+        _class.get('IN'),
+        _class.get('CRN'),
+        _class.get('SEC').upper(),
+        int(class_meta[4:].split('_')[0]),
+        create_dt_obj(_class.get('DT')),
+        int(_class.get('ENROLLED')) if _class.get(
+            'ENROLLED') else 0,
+        int(_class.get('MAX')) if _class.get('MAX') else 0,
+        str(class_meta.split('-')[0]).upper(),
+    )
+    return section
+
+def import_to_db_bulk(json_data, fname):
+    j = json.loads(json_data)
+    for college in j:
+        college_name = college.get('collegeName')
+
+        for class_category in college.get('collegeSubcategories'):
+            # the "college" the class is in
+            subsection_name = class_category.get('classesCategory')
+
+            for _class in class_category.get('classes'):
+                if _class.get('index') == 0:
+                    continue
+                
+                import_to_db_single(college_name, _class, fname)
+
+                
+
 def import_to_db(json_data, fname):
     j = json.loads(json_data)
     for college in j:
@@ -131,7 +194,7 @@ def import_to_db(json_data, fname):
                     _class.get('IM')
                 )
 
-                get_and_import_class_section(
+                course = get_and_import_class_section(
                     str(course_id),
                     _class.get('IN'),
                     _class.get('CRN'),
