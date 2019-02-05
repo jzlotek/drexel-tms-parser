@@ -11,7 +11,10 @@ import time
 
 def get_page(page, meta="", retries=3):
     for _ in range(retries):
-        response = requests.get(page)
+        try:
+            response = requests.get(page, timeout=60)
+        except:
+            continue
 
         if response.status_code == 200:
             logger.info('Process: {}\t{blue}{bold}{}s elapsed {reset}{green}{}{reset}'
@@ -133,7 +136,10 @@ def get_colleges_from_side_left(page, threaded=False, num_threads=5):
     threads = []
     class_list = []
 
-    colleges = page.find(id='sideLeft').find_all('a')
+    colleges = page.find(id='sideLeft')
+    if colleges is not None:
+        colleges = colleges.find_all('a')
+
     colleges = [[college.text, college.get('href')]
                 for college in colleges if college is not None]
 
@@ -220,16 +226,20 @@ class Crawler:
             processes = []
             if self.multiprocessing:
                 for quarter in self.quarters:
-
-                    process = multiprocessing.Process(target=run_on_page, args=(quarter,))
-                    processes.append(process)
-                    process.start()
-
-                for process in processes:
-                    process.join()
+                    try:
+                        process = multiprocessing.Process(target=run_on_page, args=(quarter,))
+                        processes.append(process)
+                        process.start()
+                        for process in processes:
+                            process.join()
+                    except:
+                        pass
             else:
-                for quarter in self.quarters:
-                    run_on_page(quarter)
+                try:
+                    for quarter in self.quarters:
+                        run_on_page(quarter)
+                except:
+                    pass
             logger.info('Done. Sleeping')
             time.sleep(60 * 60 * 24)
             # with open('./.tmp/{}.json'.format(quarter[0]), 'w') as _file:

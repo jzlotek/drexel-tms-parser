@@ -1,7 +1,6 @@
 from flask import Flask, Response, request, render_template, send_from_directory
 import os
 from sdk.db import database
-from sdk.gzip import gzipped
 import json
 from utils import logger
 
@@ -39,13 +38,11 @@ def add_header(response):
     return response
 
 @app.route('/', methods=["GET"])
-@gzipped
 def get_home():
     # needs the index to be in the dist folder to work
     return send_from_directory('../dist', 'index.html')
 
 @app.route('/static/<path:path>', methods=["GET"])
-@gzipped
 def get_file_static(path):
     # needs the index to be in the dist folder to work
     return send_from_directory('../dist/static', path)

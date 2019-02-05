@@ -61,14 +61,14 @@ def get_and_import_class_section(course, ins, crn, sec, year, date_time,
     _id = ObjectId(section.get('_id').get('$oid'))
 
     if section.get('maxEnroll') != maximum_enrolled and maximum_enrolled != 0:
-        success = Section.objects.update(id=_id, maxEnroll=maximum_enrolled)
+        success = Section.objects.get(id=_id).update(maxEnroll=maximum_enrolled)
         if success:
             logger.success('updated: {} with {}', _id, {'maxEnrolll': maximum_enrolled})
         else:
             logger.error('failed to update: {} with {}', _id, {'maxEnroll': maximum_enrolled})
 
     if section.get('enrolled') != currently_enrolled:
-        success = Section.objects.update(id=_id, enrolled=currently_enrolled)
+        success = Section.objects.get(id=_id).update(enrolled=currently_enrolled)
         if success:
             logger.success('updated: {} with {}', _id, {'enrolled': currently_enrolled})
         else:
@@ -76,14 +76,14 @@ def get_and_import_class_section(course, ins, crn, sec, year, date_time,
 
     if section.get('meeting'):
         if section.get('meeting').get('days') != date_time.get('days') and date_time.get('days') != '':
-            success = Section.objects.update(id=_id, meeting__days=date_time.get('days'))
+            success = Section.objects.get(id=_id).update(meeting__days=date_time.get('days'))
             if success:
                 logger.success('updated: {} with {}', _id, {'meeting__days': date_time.get('days')})
             else:
                 logger.error('failed to update: {} with {}', _id, {'meeting__days': date_time.get('days')})
 
         if section.get('meeting').get('times') != date_time.get('times') and date_time.get('times') is not None and len(date_time.get('times')) == 2:
-            success = Section.objects.update(id=_id, meeting__times=date_time.get('times'))
+            success = Section.objects.get(id=_id).update(meeting__times=date_time.get('times'))
             if success:
                 logger.success('updated: {} with {}', _id, {'meeting__times': date_time.get('times')})
             else:
