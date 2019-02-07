@@ -12,14 +12,21 @@ import time
 def get_page(page, meta="", retries=3):
     for _ in range(retries):
         try:
-            response = requests.get(page, timeout=60)
+            response = requests.get(page, timeout=
+                (
+                    len(multiprocessing.process.active_children()) * 60 
+                    if len(multiprocessing.process.active_children()) > 1 
+                    else 60
+                )
+            )
         except:
             continue
 
         if response.status_code == 200:
-            logger.info('Process: {}\t{blue}{bold}{}s elapsed {reset}{green}{}{reset}'
+            logger.info('Process: {}, Thread: {}\t{blue}{bold}{}s elapsed {reset}{green}{}{reset}'
                         .format(
                             multiprocessing.process.current_process().pid,
+                            hex(threading.current_thread().ident),
                             response.elapsed.total_seconds(),
                             meta,
                             green=GREEN,
@@ -216,24 +223,26 @@ class Crawler:
         page = get_page('https://termmasterschedule.drexel.edu/webtms_du/app',
                         meta='{red}webTMS Homepage Init {reset}'.format(red=RED,
                                                                         reset=RESET))
-
         self.quarters = get_links_to_terms(page)
 
     def crawl(self):
 
         while True:
-            logger.info("Starting to crawl pages")
-            processes = []
+            logger.info('Starting to crawl pages')
+
             if self.multiprocessing:
+                processes = []
+                # spin a process for each semester that is to be parsed
                 for quarter in self.quarters:
                     try:
                         process = multiprocessing.Process(target=run_on_page, args=(quarter,))
                         processes.append(process)
-                        process.start()
-                        for process in processes:
-                            process.join()
                     except:
                         pass
+                for process in processes:
+                    process.start()
+                for process in processes:
+                    process.join()
             else:
                 try:
                     for quarter in self.quarters:
