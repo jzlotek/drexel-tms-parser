@@ -3,11 +3,11 @@ from utils import logger
 
 
 def run_crawler():
-    # try:
-    crawler = Crawler(mp=True)
-    crawler.crawl()
-    # except Exception as ex:
-    #     logger.error('{}', ex)
+    try:
+        crawler = Crawler(mp=True)
+        crawler.crawl()
+    except Exception as ex:
+        logger.error('{}', ex)
 
 
 if __name__ == '__main__':
