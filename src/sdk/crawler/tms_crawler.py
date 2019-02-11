@@ -56,13 +56,13 @@ def get_college_page_sublinks(page):
 
     for child in table.children:
         if isinstance(child, bs4.element.Tag) and child.find('div'):
-            curr = child.find('div')
+            divs = child.find_all('div')
 
-            while curr is not None:
-                anchor = curr.find('a')
+            for div in divs:
+                anchor = div.find('a')
                 if isinstance(anchor, bs4.element.Tag):
                     sublinks.append((anchor.text, anchor.get('href')))
-                curr = curr.next_sibling
+
     return sublinks
 
 
