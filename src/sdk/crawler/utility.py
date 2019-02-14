@@ -22,16 +22,14 @@ class RowData(SerializeableJSON):
     def __init__(self, fields, index):
         self.row = []
         self.index = index
-        field = fields.find('td')
-        while field is not None:
+        fields = fields.find_all('td')
+        for field in fields:
             if isinstance(field, bs4.element.Tag):
                 if field.a is not None:
                     self.row.append(
                         [field.text.strip(), str(field.a.get('href'))])
                 else:
                     self.row.append(field.text.strip())
-
-            field = field.next_sibling
 
     def has_data(self):
         return len(self.row) > 0 and len(self.row[0]) > 0
@@ -46,7 +44,7 @@ def to_dt(time):
         return None
     hours = int(hours)
     minutes = int(minutes)
-    if am_pm in "PMpmPmpM" and hours != 12:
+    if am_pm.lower() == "pm" and hours != 12:
         hours += 12
     return str(datetime.time(hours, minutes if minutes < 60 else 59, 0, 0))
 
