@@ -21,8 +21,35 @@
 
             <ClassSearch/>
             <ClassListing/>
-            <WeekView :classesInput="[]"></WeekView>
-
+            <v-calendar
+              type="week"
+              :firstInterval="7"
+              :intervalCount="16"
+              >
+              <template
+                slot="dayLabel"
+                slot-scope="{ date, weekday }"
+                >
+                <div>
+                  {{ date }}
+                  {{ weekday }}
+                </div>
+              </template>
+              <template
+                slot="dayBody"
+                slot-scope="{ date, timeToY, minutesToPixels }"
+                >
+              <!-- <template v-for="event in selected">
+                <div
+                  v-if="event.time"
+                  :key="event.title"
+                  :style="{ top: timeToY(event.time) + 'px', height: minutesToPixels(event.duration) + 'px' }"
+                  class="my-event with-time"
+                  @click="open(event)"
+                  v-html="event.title"
+                ></div>-->
+              </template>
+            </v-calendar>
           </v-flex>
         </v-layout>
       </v-container>
@@ -31,6 +58,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import VApp from 'vuetify/es5/components/VApp/VApp';
 import EventBus from './EventBus';
 
@@ -51,24 +79,12 @@ export default {
   },
   data() {
     return {
-      alert: false,
-      alertData: null,
-      drawer: false,
-      obj: {
-        course: {
-          college: 'Antoinette Westphal COMAD', isQuarter: true, cn: '785', sc: 'AADM', it: 'Lecture', title: 'Research Design in the Arts', im: 'Online', cr: 3,
-        },
-        year: 18,
-        semester: 'FA',
-        crn: 13253,
-        crnLink: 'https://termmasterschedule.drexel.edu/webtms_du/app?component=courseDetails2&page=CourseList&service=direct&sp=ZH4sIAAAAAAAAAFvzloG1uIhBPjWlVC%2BlKLUiNUcvs6hErzw1qSS3WC8lsSRRLyS1KJcBAhiZGJh9GNgTk0tCMnNTSxhEfLISyxL1iwtz9EECxSWJuQXWPgwcJUAtzvkpQBVCEBU5iXnp%2BsElRZl56TB5l9Ti5EKGOgamioKCEgY2IwNDC0NToAa3xJwchcDSxCKgIgVDC11DSwAnUj6JpAAAAA%3D%3D&sp=SA&sp=SAADM&sp=S13253&sp=S785&sp=0',
-        sec: '900',
-        meeting: { days: 'MWF', times: ['12:00:00', '12:50:00'] },
-        instructor: 'Lindsey S Crane',
-        maxEnroll: 0,
-        enrolled: 0,
-      },
     };
+  },
+  computed: {
+    ...mapState({
+      selected: state => state.selected,
+    }),
   },
   mounted() {
     EventBus.$on('error', (data) => {

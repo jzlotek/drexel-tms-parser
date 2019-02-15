@@ -20,6 +20,7 @@ import Vuetify, {
   VLayout,
   VFlex,
   VContent,
+  VCalendar,
 } from 'vuetify/lib';
 import Vuex from 'vuex';
 import App from './App.vue';
@@ -47,6 +48,7 @@ Vue.use(Vuetify, {
     VLayout,
     VFlex,
     VContent,
+    VCalendar,
   },
   theme: {
     primary: '#3f51b5',
