@@ -97,6 +97,9 @@ class MongoDatabase(Database):
     def after(self, time, query):
         query.update({'after': time})
 
+    def isQuarter(self, isQuarter, query):
+        query.update({'isQuarter': isQuarter})
+   
     def execute(self, query):
         info_dict = dict()
         info_fields = [
@@ -115,7 +118,8 @@ class MongoDatabase(Database):
             'crn',
             'before',
             'after',
-            "semester"
+            'semester',
+            'isQuarter'
         ]
         meeting_dict = dict()
         meeting_fields = [
@@ -165,10 +169,10 @@ class MongoDatabase(Database):
                 c.get('_id').get('$oid') for c in course_info_list
             ]
 
-            if meeting_dict and meeting_dict.get('days') is not None and len(meeting_dict.get('days')) > 0:
+            if meeting_dict is not None and len(meeting_dict.items()) > 0:
                 course_sections = json.loads(
                     Section.objects(
-                        meeting__days=meeting_dict.get('days'),
+                        meeting=meeting_dict,
                         course__in=course_id_list,
                         __raw__=section_dict
                     ).to_json()
@@ -241,7 +245,8 @@ class MongoDatabase(Database):
             meeting: dict,
             maxEnroll: int,
             enrolled: int,
-            semester: str):
+            semester: str,
+            isQuarter: bool):
         """
             course: ObjectId of the course
             year: The year it is (beginning in Septeber for the year)
@@ -263,6 +268,7 @@ class MongoDatabase(Database):
             instructor=instructor,
             maxEnroll=maxEnroll,
             enrolled=enrolled,
-            semester=semester
+            semester=semester,
+            isQuarter=isQuarter
         )
         return course

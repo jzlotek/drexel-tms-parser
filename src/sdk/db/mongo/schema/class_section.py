@@ -1,4 +1,4 @@
-from mongoengine import StringField, IntField, DictField, Document
+from mongoengine import StringField, IntField, BooleanField, DictField, Document
 
 
 class Section(Document):
@@ -13,3 +13,4 @@ class Section(Document):
     instructor = StringField(required=True)
     maxEnroll = IntField(required=True)
     enrolled = IntField(required=True)
+    isQuarter = BooleanField(required=True)

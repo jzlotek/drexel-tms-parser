@@ -96,8 +96,7 @@ def get_classes_on_page(page, title):
             child_tags.append(data)
             i += 1
 
-    child_tags = [json.loads(TMSClass(row).toJSON())
-                  for row in list(filter(lambda row: row.has_data(), child_tags))]
+    child_tags = [json.loads(TMSClass(row).toJSON()) for row in child_tags if row.has_data()]
 
     return child_tags
 

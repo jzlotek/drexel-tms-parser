@@ -64,6 +64,10 @@ class Database(abc.ABC):
     def after(self, time, query):
         pass
 
+    @abc.abstractmethod
+    def isQuarter(self, isQuarter, query):
+        pass
+
     # excecute stored query
     @abc.abstractmethod
     def execute(self, query):
@@ -100,6 +104,8 @@ class Database(abc.ABC):
             self.before(q.get('before'), query)
         if q.get('after'):
             self.after(q.get('after'), query)
+        if q.get('isQuarter'):
+            self.isQuarter(q.get('isQuarter'), query)
 
     def clear_query(self):
         self.query = dict()

@@ -17,6 +17,13 @@ def json_response(data):
 @app.route('/course', methods=['GET'])
 def get_course():
     query = database.get_query()
+
+    # Drexel default to quarter
+    if not request.args.get('isQuarter'):
+        database.isQuarter(True, query)
+    else:
+        database.isQuarter(True, request.args.get('isQuarter'))
+
     database.query_builder(request.args, query)
     logger.info(request.args)
     data = database.execute(query)

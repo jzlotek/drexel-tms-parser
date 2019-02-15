@@ -69,35 +69,58 @@ def symboltime_to_datatime(time_range):
     time_range = list(map(to_dt, time_range))
     return time_range
 
+def time_to_number(time):
+    values = time.split(':')
+
+    if len(values) >= 2:
+        return int(values[0]) * 60 + int(values[1])
+    elif len(values) == 1:
+        return int(values[0]) * 60
+    else:
+        return 0
+
+def create_start_end(times):
+    if len(times) != 2:
+        return {'start': 0, 'end': 0}
+    return {'start': time_to_number(times[0]), 'end': time_to_number(times[1])}
+
+
+def build_date_time_obj(days, times):
+    res = {}
+    if type(times) != list:
+        times = symboltime_to_datatime(times)
+    if days.upper() == 'TBD':
+        return { 'TBD': 'TBD' }
+
+    for day in days:
+        res.update({day: create_start_end(times)})
+
+    return res
+
 
 class TMSClass(SerializeableJSON):
     def __init__(self, row):
         self.index = row.index
-        self.SC = row.row[0]
-        self.CN = row.row[1]
-        self.IT = row.row[2]
-        self.IM = row.row[3]
-        self.SEC = row.row[4]
-        self.CRN = row.row[5]
-        if isinstance(self.CRN, list) and len(self.CRN) >= 2:
-            self.CRN[1] = (BASE_URL + self.CRN[1])
-        self.CT = row.row[6]
+        self.sc = row.row[0]
+        self.cn = row.row[1]
+        self.it = row.row[2]
+        self.im = row.row[3]
+        self.sec = row.row[4]
+        self.crn = row.row[5]
+        if isinstance(self.crn, list) and len(self.crn) >= 2:
+            self.crn[1] = (BASE_URL + self.crn[1])
+        self.title = row.row[6]
         dt = row.row[7].split('\n')
-        if len(dt) > 1:
-            dt[1] = symboltime_to_datatime(dt[1])
-            self.DT = dict(
-                days=dt[0],
-                times=dt[1]
-            )
-        else:
-            self.DT = dt
-        self.IN = row.row[8]
+        if len(dt) < 2:
+            dt.append([])
+        self.meeting = build_date_time_obj(dt[0], dt[1])
+        self.ins = row.row[-1]
         try:
-            info = get_credits(self.CRN[1])
+            info = get_credits(self.crn[1])
             tmp = float(info[0])
-            self.MAX = info[2]
-            self.ENROLLED = info[1]
+            self.maxEnroll = info[2]
+            self.enrolled = info[1]
         except:
             tmp = ""
 
-        self.CR = tmp
+        self.cr = tmp

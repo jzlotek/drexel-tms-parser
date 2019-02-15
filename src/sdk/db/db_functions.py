@@ -7,29 +7,19 @@ from bson.objectid import ObjectId
 from utils import logger
 
 
-def create_dt_obj(dt):
-    try:
-        return dict(
-            days=dt.get('days'),
-            times=dt.get('times')
-        )
-    except:
-        return dict(days=dt.get('days'))
-
-
-def get_class_info(sc, cn, it, isQuarter, im):
+def get_class_info(sc, cn, it, im):
     try:
         res = ClassInfo.objects.get(
-            sc=sc, cn=cn, it=it, isQuarter=isQuarter, im=im)
+            sc=sc, cn=cn, it=it, im=im)
         return res.to_json()
     except:
         return None
 
 
-def get_class_section(course, year, crn, semester):
+def get_class_section(course, year, crn, semester, isQuarter):
     try:
         res = Section.objects.get(
-            course=course, year=year, crn=crn[0], semester=semester
+            course=course, year=year, crn=crn[0], semester=semester, isQuarter=isQuarter
         )
         return res.to_json()
     except:
@@ -37,10 +27,11 @@ def get_class_section(course, year, crn, semester):
 
 
 def get_and_import_class_section(course, ins, crn, sec, year, date_time,
-                                 currently_enrolled, maximum_enrolled, semester):
-    section = get_class_section(course, year, crn, semester)
+                                 currently_enrolled, maximum_enrolled, semester, isQuarter):
+    section = get_class_section(course, year, crn, semester, isQuarter)
 
     if section is None:
+        logger.info(ins)
         section = database.create_course_section(
                             str(course),
                             year,
@@ -51,7 +42,8 @@ def get_and_import_class_section(course, ins, crn, sec, year, date_time,
                             date_time,
                             maximum_enrolled,
                             currently_enrolled,
-                            semester
+                            semester,
+                            isQuarter
                             )
         section.save()
         logger.info("Created new section: {} {} {}", course, crn[0], sec.upper(), semester)
@@ -75,19 +67,30 @@ def get_and_import_class_section(course, ins, crn, sec, year, date_time,
             logger.error('failed to update: {} with {}', _id, {'enrolled': currently_enrolled})
 
     if section.get('meeting'):
-        if section.get('meeting').get('days') != date_time.get('days') and date_time.get('days') != '':
-            success = Section.objects.get(id=_id).update(meeting__days=date_time.get('days'))
+        if section.get('meeting').get('TBD') and date_time.get('TBD'):
+            success = Section.objects.get(id=_id).update(meeting=date_time)
             if success:
-                logger.success('updated: {} with {}', _id, {'meeting__days': date_time.get('days')})
+                logger.success('updated: {} with {}', _id, {'meeting': date_time})
             else:
-                logger.error('failed to update: {} with {}', _id, {'meeting__days': date_time.get('days')})
-
-        if section.get('meeting').get('times') != date_time.get('times') and date_time.get('times') is not None and len(date_time.get('times')) == 2:
-            success = Section.objects.get(id=_id).update(meeting__times=date_time.get('times'))
-            if success:
-                logger.success('updated: {} with {}', _id, {'meeting__times': date_time.get('times')})
-            else:
-                logger.error('failed to update: {} with {}', _id, {'meeting__times': date_time.get('times')})
+                logger.error('failed to update: {} with {}', _id, {'meeting': date_time})
+        elif not section.get('meeting').get('TBD') and date_time.get('TBD'):
+            # check differences
+            tmp_meeting = {}
+            changes = False
+            for key, value in date_time.items():
+                if (not section.get('meeting').get(key) and value.get('start') > 0 and value.get('end') > 0) or\
+                    (section.get('meeting').get(key) != value and value.get('start') > 0 and value.get('end') > 0):
+                    tmp_meeting.update({key, value})
+                    changes = True
+                else:
+                    tmp_meeting.update({key, section.get('meeting').get(key)})
+            
+            if changes:
+                success = Section.objects.get(id=_id).update(meeting=tmp_meeting)
+                if success:
+                    logger.success('updated: {} with {}', _id, {'meeting': date_time})
+                else:
+                    logger.error('failed to update: {} with {}', _id, {'meeting': date_time})
 
     return json.loads(Section.objects.get(id=_id).to_json())
 
@@ -100,18 +103,18 @@ def get_class_info_by_id(id):
 
 
 @logger.catch
-def get_and_import_info(college, isQuarter, cn, sc, it, title, cr, im):
-    c = get_class_info(sc, cn, it, isQuarter, im)
+def get_and_import_info(college, cn, sc, it, title, cr, im):
+    c = get_class_info(sc, cn, it, im)
 
     if c is None:
-        logger.error('{} {} {} {} {} not found', sc, cn, it, isQuarter, im)
+        logger.error('{} {} {} {} not found', sc, cn, it, im)
         try:
-            c = ClassInfo(college=college, isQuarter=isQuarter, cn=cn, sc=sc,
+            c = ClassInfo(college=college, cn=cn, sc=sc,
                           it=it, title=title, cr=cr, im=im).save().to_json()
-            logger.success('{} {} {} {} {} created', sc, cn, it, isQuarter, im)
+            logger.success('{} {} {} {} created', sc, cn, it, im)
         except:
-            logger.critical('{} {} {} {} {} failed. Perhaps the connection to the db is severed',
-                            sc, cn, it, isQuarter, im)
+            logger.critical('{} {} {} {} failed. Perhaps the connection to the db is severed',
+                            sc, cn, it, im)
             return ''
     c = json.loads(c)
     if c.get('cr') != cr and cr != 0:
@@ -130,26 +133,26 @@ def get_and_import_info(college, isQuarter, cn, sc, it, title, cr, im):
 def import_to_db_single(college_name, _class, class_meta):
     course_id = get_and_import_info(
         college_name,
-        '-Q' in class_meta,
-        _class.get('CN'),
-        _class.get('SC').upper(),
-        _class.get('IT'),
-        _class.get('CT'),
-        float(_class.get('CR')) if _class.get('CR') else 0.0,
-        _class.get('IM')
+        _class.get('cn'),
+        _class.get('sc').upper(),
+        _class.get('it'),
+        _class.get('title'),
+        float(_class.get('cr')) if _class.get('cr') else 0.0,
+        _class.get('im')
     )
 
     section = get_and_import_class_section(
         str(course_id),
-        _class.get('IN'),
-        _class.get('CRN'),
-        _class.get('SEC').upper(),
+        _class.get('ins'),
+        _class.get('crn'),
+        _class.get('sec').upper(),
         int(class_meta[4:].split('_')[0]),
-        create_dt_obj(_class.get('DT')),
-        int(_class.get('ENROLLED')) if _class.get(
-            'ENROLLED') else 0,
-        int(_class.get('MAX')) if _class.get('MAX') else 0,
+        _class.get('meeting'),
+        int(_class.get('enrolled')) if _class.get(
+            'enrolled') else 0,
+        int(_class.get('maxEnroll')) if _class.get('maxEnroll') else 0,
         str(class_meta.split('-')[0]).upper(),
+        '-Q' in class_meta
     )
     return section
 
@@ -183,29 +186,29 @@ def import_to_db(json_data, fname):
                 if _class.get('index') == 0:
                     continue
 
-                course_id = get_and_import_info(
-                    college_name,
-                    '-Q' in fname,
-                    _class.get('CN'),
-                    _class.get('SC').upper(),
-                    _class.get('IT'),
-                    _class.get('CT'),
-                    float(_class.get('CR')) if _class.get('CR') else 0.0,
-                    _class.get('IM')
-                )
+            course_id = get_and_import_info(
+                college_name,
+                _class.get('cn'),
+                _class.get('sc').upper(),
+                _class.get('it'),
+                _class.get('title'),
+                float(_class.get('cr')) if _class.get('cr') else 0.0,
+                _class.get('im')
+            )
 
-                course = get_and_import_class_section(
-                    str(course_id),
-                    _class.get('IN'),
-                    _class.get('CRN'),
-                    _class.get('SEC').upper(),
-                    int(fname[4:].split('_')[0]),
-                    create_dt_obj(_class.get('DT')),
-                    int(_class.get('ENROLLED')) if _class.get(
-                        'ENROLLED') else 0,
-                    int(_class.get('MAX')) if _class.get('MAX') else 0,
-                    str(fname.split('-')[0]).upper(),
-                )
+            section = get_and_import_class_section(
+                str(course_id),
+                _class.get('ins'),
+                _class.get('crn'),
+                _class.get('sec').upper(),
+                int(fname[4:].split('_')[0]),
+                _class.get('meeting'),
+                int(_class.get('enrolled')) if _class.get(
+                    'enrolled') else 0,
+                int(_class.get('maxEnroll')) if _class.get('maxEnroll') else 0,
+                str(fname.split('-')[0]).upper(),
+                '-Q' in fname
+            )
 
 
 if __name__ == '__main__':
