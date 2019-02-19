@@ -1,24 +1,25 @@
 {
   "name": "drexel-tms-parser",
   "version": "0.1.0",
-  "description": "Made to parse out the Drexel TMS to make class selection easier to manage.",
   "private": true,
+  "description": "Made to parse out the Drexel TMS to make class selection easier to manage.",
   "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build --modern --target app",
+    "lint": "vue-cli-service lint",
+    "dev": "NODE_ENV=dev vue-cli-service build --watch",
     "nuke:all": "npm run nuke:py; npm run nuke:node; bash ./install.sh",
     "nuke:node": "rm -fr ./**/node_modules",
     "nuke:py": "rm -fr ./**/venv",
-    "webapp": "PORT=5000 python ./src/webapp.py",
-    "serve": "vue-cli-service serve",
-    "dev": "NODE_ENV=dev vue-cli-service build --watch",
-    "lint": "vue-cli-service lint",
-    "build": "vue-cli-service build --modern --target app"
+    "webapp": "PORT=5000 python ./src/webapp.py"
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "lodash": "^4.17.11",
     "register-service-worker": "^1.5.2",
-    "vue": "^2.5.22",
-    "vuetify": "^1.5.0",
-    "vuex": "^3.0.1"
+    "vue": "^2.6.6",
+    "vuetify": "^1.5.1",
+    "vuex": "^3.1.0"
   },
   "devDependencies": {
     "@gfx/zopfli": "^1.0.10",
@@ -41,9 +42,9 @@
     "sass-loader": "^7.1.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
-    "vue-template-compiler": "^2.5.22",
-    "vuetify-loader": "^1.1.1",
-    "webpack": "^4.28.4"
+    "vue-template-compiler": "^2.6.6",
+    "vuetify-loader": "^1.2.1",
+    "webpack": "^4.29.5"
   },
   "engines": {
     "node": ">= 10.5.0",

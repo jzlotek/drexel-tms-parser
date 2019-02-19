@@ -37,17 +37,18 @@
               </template>
               <template
                 slot="dayBody"
-                slot-scope="{ date, timeToY, minutesToPixels }"
+                slot-scope="{ date, timeToY, minutesToPixels, weekday }"
                 >
-              <!-- <template v-for="event in selected">
-                <div
-                  v-if="event.time"
-                  :key="event.title"
-                  :style="{ top: timeToY(event.time) + 'px', height: minutesToPixels(event.duration) + 'px' }"
-                  class="my-event with-time"
-                  @click="open(event)"
-                  v-html="event.title"
-                ></div>-->
+                <template v-for="event in eventsMap[date]">
+                  <div
+                    v-if="event.time"
+                    :key="event.title"
+                    :style="{ top: timeToY(event.time) + 'px', height: minutesToPixels(event.duration) + 'px' }"
+                    class="my-event with-time"
+                    @click="open(event)"
+                    v-html="event.title"
+                  ></div>
+                </template>
               </template>
             </v-calendar>
           </v-flex>
@@ -58,7 +59,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import VApp from 'vuetify/es5/components/VApp/VApp';
 import EventBus from './EventBus';
 
@@ -66,8 +67,6 @@ import EventBus from './EventBus';
 const ClassListing = () => import('./components/ClassListing');
 /* webpackChunkName: "class-search" */
 const ClassSearch = () => import('./components/ClassSearch');
-/* webpackChunkName: "week-view" */
-const WeekView = () => import('./components/weekview/WeekView');
 
 export default {
   name: 'App',
@@ -75,22 +74,29 @@ export default {
     VApp,
     ClassListing,
     ClassSearch,
-    WeekView,
   },
   data() {
     return {
+      alert: false,
+      alertData: '',  
     };
   },
   computed: {
     ...mapState({
       selected: state => state.selected,
     }),
+    ...mapGetters({
+      eventsMap: 'getMappedSelected',
+    })
   },
   mounted() {
     EventBus.$on('error', (data) => {
       this.alert = true;
       this.alertData = data;
-      setTimeout(() => { this.alert = false; }, 5000);
+      setTimeout(() => {
+        this.alert = false;
+        this.alertData = '';
+      }, 5000);
     });
   },
 };

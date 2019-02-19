@@ -1,4 +1,5 @@
 import axios from 'axios';
+import EventBus from '../EventBus';
 import {
   UPDATE_CLASSES, CLEAR_QUERY, ADD_TO_SELCTED, ADD_TO_QUERY, REMOVE_FROM_SELCTED, REMOVE_FROM_QUERY,
 } from './constants';
@@ -22,8 +23,12 @@ const actions = {
   [REMOVE_FROM_QUERY]({ commit }, payload) {
     commit(REMOVE_FROM_QUERY, payload);
   },
-  [ADD_TO_SELCTED]({ commit }, payload) {
-    commit(ADD_TO_SELCTED, payload);
+  [ADD_TO_SELCTED]({ commit, state }, payload) {
+    if (!state.selected.includes(payload)) {
+      commit(ADD_TO_SELCTED, payload);
+    } else {
+      EventBus.$emit('error', payload);
+    }
   },
   [ADD_TO_QUERY]({ commit }, payload) {
     commit(ADD_TO_QUERY, payload);

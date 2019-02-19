@@ -31,7 +31,6 @@ def get_and_import_class_section(course, ins, crn, sec, year, date_time,
     section = get_class_section(course, year, crn, semester, isQuarter)
 
     if section is None:
-        logger.info(ins)
         section = database.create_course_section(
                             str(course),
                             year,

@@ -19,8 +19,7 @@
         </td>
         <td>
           <TimeDateDisplay
-              :days="props.item.meeting.days"
-              :times="props.item.meeting.times">
+              :times="props.item.meeting">
           </TimeDateDisplay>
         </td>
         <td>

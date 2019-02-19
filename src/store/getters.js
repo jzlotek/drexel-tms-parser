@@ -28,6 +28,16 @@ const getters = {
   getSelected(state) {
     return state.selected;
   },
+  getMappedSelected(state) {
+    return state.selected.map((event) => {
+      return {
+        title: event.title,
+        date: new Date(),
+        time: event.meeting.start,
+        duration: Math.abs(event.meeting.end - event.meeting.start),
+      };
+    });
+  },
 };
 
 export default getters;
