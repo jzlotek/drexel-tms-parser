@@ -29,14 +29,12 @@ const getters = {
     return state.selected;
   },
   getMappedSelected(state) {
-    return state.selected.map((event) => {
-      return {
-        title: event.title,
-        date: new Date(),
-        time: event.meeting.start,
-        duration: Math.abs(event.meeting.end - event.meeting.start),
-      };
-    });
+    return state.selected.map(event => ({
+      title: event.title,
+      date: new Date(),
+      time: event.meeting.start,
+      duration: Math.abs(event.meeting.end - event.meeting.start),
+    }));
   },
 };
 

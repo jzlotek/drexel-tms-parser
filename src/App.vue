@@ -78,7 +78,7 @@ export default {
   data() {
     return {
       alert: false,
-      alertData: '',  
+      alertData: '',
     };
   },
   computed: {
@@ -87,7 +87,7 @@ export default {
     }),
     ...mapGetters({
       eventsMap: 'getMappedSelected',
-    })
+    }),
   },
   mounted() {
     EventBus.$on('error', (data) => {
