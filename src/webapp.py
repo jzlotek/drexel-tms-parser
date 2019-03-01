@@ -3,6 +3,7 @@ import os
 from sdk.db import database
 import json
 from utils import logger
+from plotter import get_plot
 
 app = Flask(__name__,
             static_folder="../dist/static",
@@ -13,6 +14,11 @@ def json_response(data):
     json_string = json.dumps(data)
     return Response(json_string, mimetype='application/json')
 
+@app.route('/plot/<string:sc>/<string:cn>', methods=['GET'])
+def create_plot(sc, cn):
+    buf = get_plot(sc, cn, request.args.get('isQuarter') if request.args.get('isQuarter') and request.args.get('isQuarter').lower() == 'false' else True)
+
+    return Response(buf, mimetype='image/png')
 
 @app.route('/course', methods=['GET'])
 def get_course():
