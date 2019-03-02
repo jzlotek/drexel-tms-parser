@@ -26,4 +26,6 @@ workflows:
   build_and_test_python:
     jobs:
       - build_python
-      - test_python
+      - test_python:
+          requires:
+            - build_python
