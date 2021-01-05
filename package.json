@@ -14,7 +14,7 @@
     "webapp": "PORT=5000 python ./src/webapp.py"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "lodash": "^4.17.11",
     "register-service-worker": "^1.5.2",
     "vue": "^2.6.6",
